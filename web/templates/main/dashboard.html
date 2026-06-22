@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ titulo_pagina|default('Painel Comercial') }} · CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===================== TOKENS ===================== */
+  :root{
+    --ledger-cover: #0E2420;
+    --ledger-cover-2: #163530;
+    --paper: #ECE6D4;
+    --paper-soft: #F5F1E4;
+    --ink: #1B2A22;
+    --ink-soft: #51604F;
+    --ink-faint: #8A9389;
+    --brass: #C9A227;
+    --brass-soft: #E4C861;
+    --rule: rgba(201, 162, 39, 0.28);
+    --stamp-red: #A23B2E;
+    --stamp-red-soft: #F1DAD3;
+    --stamp-green: #3F6B4F;
+    --stamp-green-soft: #DCE7DC;
+    --stamp-blue: #3C5A75;
+    --stamp-blue-soft: #DAE2E7;
+    --stamp-amber: #C98A2B;
+    --stamp-amber-soft: #F1E2C4;
+    --stamp-violet: #6B4E71;
+    --stamp-violet-soft: #E7DDE8;
+    --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+    --font-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+    --radius: 3px;
+    --shadow-card: 0 1px 2px rgba(20,30,24,0.06), 0 6px 16px rgba(20,30,24,0.07);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--ledger-cover);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3{ font-family: var(--font-display); margin:0; font-weight:600; }
+  a{ color: inherit; }
+  button{ font-family: var(--font-body); cursor:pointer; }
+
+  /* ===================== ACESSIBILIDADE ===================== */
+  .skip-link{
+    position:absolute; left:-999px; top:0;
+    background: var(--brass-soft); color: var(--ledger-cover);
+    padding:.6rem 1rem; font-weight:600; z-index:999;
+  }
+  .skip-link:focus{ left:1rem; top:1rem; }
+  :focus-visible{ outline: 2px solid var(--brass-soft); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* ===================== CAPA / CABEÇALHO ===================== */
+  .cover{
+    background: linear-gradient(165deg, var(--ledger-cover), var(--ledger-cover-2));
+    padding: 1.4rem clamp(1.2rem, 4vw, 3rem) .6rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cover-top{
+    display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
+  }
+  .brand{ display:flex; align-items:center; gap:.85rem; }
+  .brand-mark{
+    width:42px; height:42px; flex:none; display:grid; place-items:center;
+    border:1.5px solid var(--brass); border-radius:50%;
+    color: var(--brass-soft);
+  }
+  .brand-text h1{ color: var(--paper-soft); font-size:1.15rem; letter-spacing:.01em; }
+  .brand-text p{ margin:.1rem 0 0; color: var(--brass-soft); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; }
+
+  .search-form{ flex:1; min-width:220px; max-width:420px; }
+  .search-form input{
+    width:100%; padding:.6rem .9rem; border-radius: var(--radius);
+    border:1px solid rgba(201,162,39,.35); background: rgba(245,241,228,.06);
+    color: var(--paper-soft); font-size:.88rem;
+  }
+  .search-form input::placeholder{ color: rgba(245,241,228,.55); }
+  .search-form input:focus{ background: rgba(245,241,228,.12); }
+
+  .header-actions{ display:flex; align-items:center; gap:.8rem; }
+  .btn-quick-add{
+    background: var(--brass); color: var(--ledger-cover); border:none;
+    padding:.6rem 1rem; border-radius: var(--radius); font-weight:600; font-size:.84rem;
+  }
+  .btn-quick-add:hover{ background: var(--brass-soft); }
+  .user-chip{
+    display:flex; align-items:center; gap:.5rem; color: var(--paper-soft); font-size:.82rem;
+  }
+  .user-chip .avatar{
+    width:30px; height:30px; border-radius:50%; background: var(--brass-soft); color: var(--ledger-cover);
+    display:grid; place-items:center; font-size:.78rem; font-weight:600;
+  }
+
+  .ledger-nav{
+    display:flex; gap:1.6rem; margin-top:1.1rem; padding-top:.7rem;
+    border-top: 1px dashed var(--rule); flex-wrap:wrap;
+  }
+  .ledger-nav a{
+    color: var(--brass-soft); text-decoration:none; font-size:.78rem;
+    letter-spacing:.07em; text-transform:uppercase; padding-bottom:.3rem;
+    border-bottom:2px solid transparent;
+  }
+  .ledger-nav a:hover{ border-bottom-color: var(--brass); }
+
+  /* ===================== MAIN ===================== */
+  main{ background: var(--paper); }
+  section{ padding: clamp(1.6rem, 4vw, 3rem); }
+  .eyebrow{
+    font-family: var(--font-mono); font-size:.72rem; letter-spacing:.12em;
+    text-transform:uppercase; color: var(--ink-faint);
+  }
+
+  /* ===================== FUNIL (elemento de assinatura) ===================== */
+  .funnel-hero{ padding-bottom: 1.2rem; }
+  .funnel-intro{ margin-bottom:1.6rem; }
+  .funnel-intro h2{ font-size:1.5rem; margin-top:.3rem; }
+  .funnel-stages{
+    max-width:560px; margin:0 auto; display:flex; flex-direction:column; align-items:center;
+  }
+  .funnel-row{
+    width:100%; display:flex; flex-direction:column; align-items:center; gap:.5rem;
+    opacity:0; transform: translateY(8px);
+    animation: rise .5s ease forwards;
+  }
+  .funnel-row:nth-child(1){ animation-delay:.02s; }
+  .funnel-row:nth-child(3){ animation-delay:.10s; }
+  .funnel-row:nth-child(5){ animation-delay:.18s; }
+  .funnel-row:nth-child(7){ animation-delay:.26s; }
+  .funnel-row:nth-child(9){ animation-delay:.34s; }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+
+  .funnel-shape{
+    height:58px; border-top:2px solid rgba(255,255,255,.35);
+    clip-path: polygon(3% 0, 97% 0, 90% 100%, 10% 100%);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .funnel-info{ display:flex; gap:.9rem; align-items:baseline; font-size:.84rem; }
+  .funnel-stage-name{ font-weight:600; }
+  .funnel-stage-count{ color: var(--ink-soft); }
+  .funnel-stage-value{ font-family: var(--font-mono); color: var(--ink-soft); }
+
+  .funnel-divider{ display:flex; align-items:center; gap:.5rem; margin:.25rem 0; }
+  .conv-badge{
+    font-family: var(--font-mono); font-size:.72rem; color: var(--brass);
+    border:1px solid var(--brass); border-radius:50%;
+    width:38px; height:38px; display:grid; place-items:center;
+  }
+
+  .bg-blue{ background: var(--stamp-blue); }
+  .bg-amber{ background: var(--stamp-amber); }
+  .bg-green{ background: var(--stamp-green); }
+  .bg-red{ background: var(--stamp-red); }
+  .bg-violet{ background: var(--stamp-violet); }
+
+  /* ===================== MÉTRICAS ===================== */
+  .metrics-row{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem;
+    padding-top:0;
+  }
+  .metric-card{
+    background: var(--paper-soft); border:1px solid var(--rule);
+    border-radius: var(--radius); padding:1.1rem 1.2rem; box-shadow: var(--shadow-card);
+  }
+  .metric-label{ display:block; font-size:.74rem; color: var(--ink-faint); letter-spacing:.04em; }
+  .metric-value{
+    display:block; font-family: var(--font-display); font-size:1.7rem; margin:.25rem 0;
+  }
+  .metric-delta{ font-family: var(--font-mono); font-size:.76rem; }
+  .metric-delta.up{ color: var(--stamp-green); }
+  .metric-delta.down{ color: var(--stamp-red); }
+
+  /* ===================== PAINÉIS GERAIS ===================== */
+  .panel{
+    background: var(--paper-soft); border:1px solid var(--rule);
+    border-radius: var(--radius); box-shadow: var(--shadow-card);
+  }
+  .panel-header{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:1.1rem 1.3rem; border-bottom:1px solid var(--rule);
+  }
+  .panel-header h3{ font-size:1rem; }
+  .panel-meta{ font-family: var(--font-mono); font-size:.76rem; color: var(--ink-faint); }
+
+  /* ===================== GRID PRINCIPAL ===================== */
+  .main-grid{
+    display:grid; grid-template-columns: 2fr 1fr; gap:1.3rem; align-items:start;
+  }
+
+  /* tabela de contatos */
+  .contacts-table{ width:100%; border-collapse:collapse; font-size:.86rem; }
+  .contacts-table th{
+    text-align:left; padding:.7rem 1.3rem; font-size:.72rem; letter-spacing:.05em;
+    text-transform:uppercase; color: var(--ink-faint); border-bottom:1px solid var(--rule);
+  }
+  .contacts-table td{ padding:.75rem 1.3rem; border-bottom:1px solid var(--rule); vertical-align:middle; }
+  .contacts-table tr:last-child td{ border-bottom:none; }
+  .avatar{
+    display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%;
+    background: var(--stamp-blue-soft); color: var(--stamp-blue); font-size:.7rem; font-weight:600;
+    margin-right:.5rem; font-family: var(--font-mono);
+  }
+  .stage-pill{
+    font-family: var(--font-mono); font-size:.72rem; padding:.2rem .55rem; border-radius:999px;
+  }
+  .stage-blue{ background: var(--stamp-blue-soft); color: var(--stamp-blue); }
+  .stage-amber{ background: var(--stamp-amber-soft); color: var(--stamp-amber); }
+  .stage-green{ background: var(--stamp-green-soft); color: var(--stamp-green); }
+  .stage-red{ background: var(--stamp-red-soft); color: var(--stamp-red); }
+  .stage-violet{ background: var(--stamp-violet-soft); color: var(--stamp-violet); }
+
+  .interaction-icon{ display:inline-block; width:14px; height:14px; vertical-align:-2px; margin-right:.3rem; }
+  .interaction-icon svg{ width:100%; height:100%; }
+  .row-link{ font-size:.78rem; text-decoration:underline; white-space:nowrap; }
+  .empty-state{ text-align:center; padding:2rem 1rem; color: var(--ink-faint); font-size:.86rem; }
+
+  /* tarefas e automações */
+  .task-list{ list-style:none; margin:0; padding:0; }
+  .task-item{
+    display:flex; gap:.7rem; align-items:flex-start; padding:.85rem 1.3rem;
+    border-bottom:1px solid var(--rule);
+  }
+  .task-item:last-child{ border-bottom:none; }
+  .task-item.overdue{ background: var(--stamp-red-soft); }
+  .task-item.done .task-title{ text-decoration: line-through; color: var(--ink-faint); }
+  .task-type-badge{
+    font-family: var(--font-mono); font-size:.65rem; text-transform:uppercase; letter-spacing:.04em;
+    padding:.2rem .4rem; border-radius:3px; white-space:nowrap; margin-top:.1rem;
+  }
+  .badge-tarefa{ background: var(--stamp-blue-soft); color: var(--stamp-blue); }
+  .badge-lembrete{ background: var(--stamp-amber-soft); color: var(--stamp-amber); }
+  .badge-automacao{ background: var(--stamp-violet-soft); color: var(--stamp-violet); }
+  .task-title{ margin:0; font-size:.86rem; font-weight:500; }
+  .task-meta{ margin:.15rem 0 0; font-size:.76rem; color: var(--ink-faint); font-family: var(--font-mono); }
+  .automation-cta{
+    display:block; width:calc(100% - 2.6rem); margin:1rem 1.3rem 1.3rem;
+    background:none; border:1px dashed var(--ink-faint); color: var(--ink-soft);
+    padding:.65rem; border-radius: var(--radius); font-size:.82rem;
+  }
+  .automation-cta:hover{ border-color: var(--brass); color: var(--ink); }
+
+  /* relatórios */
+  .reports-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:1.3rem; }
+  .chart-panel{ padding:1.2rem 1.3rem 1.4rem; }
+  .chart-panel h3{ font-size:.95rem; margin-bottom:.8rem; }
+  .chart-panel canvas{ max-height:240px; }
+
+  footer{
+    background: var(--ledger-cover); color: rgba(245,241,228,.55);
+    text-align:center; padding:1.2rem; font-size:.78rem; font-family: var(--font-mono);
+  }
+
+  /* ===================== DIALOGS ===================== */
+  dialog{
+    border:none; border-radius: var(--radius); padding:0; max-width:420px; width:90%;
+    box-shadow: 0 12px 40px rgba(0,0,0,.25);
+  }
+  dialog::backdrop{ background: rgba(14,36,32,.55); }
+  .dialog-inner{ padding:1.4rem 1.5rem; }
+  .dialog-inner h3{ margin-bottom:1rem; }
+  .dialog-inner label{ display:block; font-size:.78rem; color: var(--ink-soft); margin:.7rem 0 .25rem; }
+  .dialog-inner input, .dialog-inner select{
+    width:100%; padding:.55rem .7rem; border:1px solid var(--rule); border-radius:3px; font-size:.86rem;
+    font-family: var(--font-body); background: var(--paper-soft); color: var(--ink);
+  }
+  .dialog-actions{ display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.3rem; }
+  .dialog-actions button{ padding:.55rem 1rem; border-radius:3px; font-size:.84rem; border:1px solid var(--rule); background:none; }
+  .dialog-actions .primary{ background: var(--ledger-cover); color: var(--paper-soft); border-color: var(--ledger-cover); }
+
+  /* ===================== RESPONSIVO ===================== */
+  @media (max-width: 980px){
+    .main-grid{ grid-template-columns: 1fr; }
+    .reports-grid{ grid-template-columns: 1fr; }
+    .metrics-row{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 560px){
+    .metrics-row{ grid-template-columns: 1fr; }
+    .contacts-table{ font-size:.8rem; }
+    .contacts-table th:nth-child(2), .contacts-table td:nth-child(2){ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
+
+<header class="cover">
+  <div class="cover-top">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M4 4h16l-6 9v6l-4 2v-8L4 4z"/>
+        </svg>
+      </span>
+      <div class="brand-text">
+        <h1>{{ empresa_nome|default('Painel Comercial') }}</h1>
+        <p>Gestão de relacionamento com clientes</p>
+      </div>
+    </div>
+
+    <form class="search-form" action="{{ url_for('main.buscar') if config.get('BUSCAR_ENDPOINT', true) else '#' }}" method="get" role="search">
+      <label for="busca-geral" class="visually-hidden" style="position:absolute;left:-9999px;">Buscar contato, empresa ou negócio</label>
+      <input id="busca-geral" type="search" name="q" placeholder="Buscar contato, empresa ou negócio…">
+    </form>
+
+    <div class="header-actions">
+      <button class="btn-quick-add" onclick="document.getElementById('modal-novo-contato').showModal()">+ Novo contato</button>
+      <div class="user-chip">
+        <span class="avatar">{{ usuario.iniciais|default('VC') }}</span>
+        <span>{{ usuario.nome|default('Visitante') }}</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="ledger-nav" aria-label="Seções do painel">
+    <a href="#funil">Funil de vendas</a>
+    <a href="#contatos">Contatos</a>
+    <a href="#tarefas">Tarefas &amp; automações</a>
+    <a href="#relatorios">Relatórios</a>
+  </nav>
+</header>
+
+<main id="conteudo-principal">
+
+  <!-- ===================== FUNIL DE VENDAS ===================== -->
+  <section id="funil" class="funnel-hero" aria-labelledby="funil-titulo">
+    <div class="funnel-intro">
+      <span class="eyebrow">Funil de vendas</span>
+      <h2 id="funil-titulo">Da prospecção ao pós-venda — {{ periodo_funil|default('mês atual') }}</h2>
+    </div>
+
+    <div class="funnel-stages">
+      {% for etapa in funil %}
+      <div class="funnel-row">
+        <div class="funnel-shape bg-{{ etapa.cor }}" style="width: {{ etapa.largura_pct }}%;" role="img"
+             aria-label="{{ etapa.nome }}: {{ etapa.quantidade }} negócios"></div>
+        <div class="funnel-info">
+          <span class="funnel-stage-name">{{ etapa.nome }}</span>
+          <span class="funnel-stage-count">{{ etapa.quantidade }} negócio{{ 's' if etapa.quantidade != 1 else '' }}</span>
+          <span class="funnel-stage-value">R$ {{ etapa.valor_total }}</span>
+        </div>
+      </div>
+      {% if not loop.last %}
+      <div class="funnel-divider">
+        <span class="conv-badge">{{ etapa.conversao_pct }}%</span>
+      </div>
+      {% endif %}
+      {% else %}
+      <p class="empty-state">Cadastre negócios para acompanhar aqui o avanço entre as etapas do funil.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ===================== MÉTRICAS ===================== -->
+  <section aria-label="Métricas gerais">
+    <div class="metrics-row">
+      {% for m in metricas %}
+      <div class="metric-card">
+        <span class="metric-label">{{ m.label }}</span>
+        <span class="metric-value">{{ m.valor }}</span>
+        <span class="metric-delta {{ 'up' if m.delta >= 0 else 'down' }}">
+          {{ '+' if m.delta >= 0 else '' }}{{ m.delta }}% vs. mês anterior
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ===================== CONTATOS + TAREFAS ===================== -->
+  <section>
+    <div class="main-grid">
+
+      <div class="panel" id="contatos" aria-labelledby="contatos-titulo">
+        <div class="panel-header">
+          <h3 id="contatos-titulo">Contatos</h3>
+          <span class="panel-meta">{{ contatos|length }} no total</span>
+        </div>
+        <table class="contacts-table">
+          <thead>
+            <tr>
+              <th scope="col">Contato</th>
+              <th scope="col">Empresa</th>
+              <th scope="col">Etapa</th>
+              <th scope="col">Última interação</th>
+              <th scope="col"><span style="position:absolute;left:-9999px;">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in contatos %}
+            <tr>
+              <td><span class="avatar">{{ c.iniciais }}</span>{{ c.nome }}</td>
+              <td>{{ c.empresa }}</td>
+              <td><span class="stage-pill stage-{{ c.etapa_cor }}">{{ c.etapa }}</span></td>
+              <td>
+                <span class="interaction-icon" aria-hidden="true">
+                  {% if c.ultima_interacao.tipo == 'email' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg>
+                  {% elif c.ultima_interacao.tipo == 'ligacao' %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4c1 4 2 6 4 8s4 3 8 4l2-3-5-2-1 1c-2-1-3-2-4-4l1-1-2-5z"/></svg>
+                  {% else %}
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v10H9l-4 4V5z"/></svg>
+                  {% endif %}
+                </span>
+                {{ c.ultima_interacao.resumo }} · {{ c.ultima_interacao.data }}
+              </td>
+              <td><a class="row-link" href="{{ url_for('contato_detalhe', contato_id=c.id) }}">Histórico</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="empty-state">Nenhum contato cadastrado ainda. Use "Novo contato" para começar.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel" id="tarefas" aria-labelledby="tarefas-titulo">
+        <div class="panel-header">
+          <h3 id="tarefas-titulo">Tarefas &amp; automações</h3>
+          <span class="panel-meta">{{ tarefas|selectattr('concluida', 'equalto', false)|list|length }} pendentes</span>
+        </div>
+        <ul class="task-list">
+          {% for t in tarefas %}
+          <li class="task-item {{ 'done' if t.concluida }} {{ 'overdue' if t.atrasada and not t.concluida }}">
+            <span class="task-type-badge badge-{{ t.tipo }}">{{ t.tipo }}</span>
+            <div class="task-body">
+              <p class="task-title">{{ t.titulo }}</p>
+              <p class="task-meta">{{ t.contato }} · vence {{ t.prazo }}</p>
+            </div>
+          </li>
+          {% else %}
+          <li class="empty-state">Nenhuma tarefa agendada.</li>
+          {% endfor %}
+        </ul>
+        <button class="automation-cta" onclick="document.getElementById('modal-automacao').showModal()">
+          + Configurar nova automação
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== RELATÓRIOS ===================== -->
+  <section id="relatorios" aria-labelledby="relatorios-titulo">
+    <span class="eyebrow">Relatórios e métricas</span>
+    <h2 id="relatorios-titulo" style="font-size:1.3rem; margin:.4rem 0 1.2rem;">Desempenho comercial</h2>
+    <div class="reports-grid">
+      <div class="panel chart-panel">
+        <h3>Conversão por etapa do funil</h3>
+        <canvas id="grafico-funil" role="img" aria-label="Gráfico de barras com a quantidade de negócios por etapa do funil"></canvas>
+      </div>
+      <div class="panel chart-panel">
+        <h3>Receita nos últimos meses</h3>
+        <canvas id="grafico-receita" role="img" aria-label="Gráfico de linha com a evolução da receita mensal"></canvas>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  {{ empresa_nome|default('Painel Comercial') }} · atualizado em {{ data_atualizacao|default('agora') }}
+</footer>
+
+<!-- ===================== MODAL: NOVO CONTATO ===================== -->
+<dialog id="modal-novo-contato">
+  <form class="dialog-inner" method="post" action="{{ url_for('main.criar_contato') }}">
+    <h3>Novo contato</h3>
+    <label for="nc-nome">Nome</label>
+    <input id="nc-nome" name="nome" type="text" required>
+    <label for="nc-empresa">Empresa</label>
+    <input id="nc-empresa" name="empresa" type="text">
+    <label for="nc-email">E-mail</label>
+    <input id="nc-email" name="email" type="email">
+    <label for="nc-telefone">Telefone</label>
+    <input id="nc-telefone" name="telefone" type="tel">
+    <label for="nc-etapa">Etapa inicial</label>
+    <select id="nc-etapa" name="etapa">
+      {% for etapa in funil %}
+      <option value="{{ etapa.nome }}">{{ etapa.nome }}</option>
+      {% endfor %}
+    </select>
+    <div class="dialog-actions">
+      <button type="button" onclick="document.getElementById('modal-novo-contato').close()">Cancelar</button>
+      <button type="submit" class="primary">Salvar contato</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ===================== MODAL: NOVA AUTOMAÇÃO ===================== -->
+<dialog id="modal-automacao">
+  <form class="dialog-inner" method="post" action="{{ url_for('main.criar_automacao') }}">
+    <h3>Nova automação</h3>
+    <label for="au-gatilho">Quando isto acontecer</label>
+    <select id="au-gatilho" name="gatilho">
+      <option value="novo_contato">Novo contato cadastrado</option>
+      <option value="mudanca_etapa">Negócio muda de etapa</option>
+      <option value="sem_interacao">Contato sem interação há X dias</option>
+    </select>
+    <label for="au-acao">Fazer isto</label>
+    <select id="au-acao" name="acao">
+      <option value="enviar_email">Enviar e-mail automático</option>
+      <option value="criar_tarefa">Criar tarefa para a equipe</option>
+      <option value="lembrete">Disparar lembrete</option>
+    </select>
+    <label for="au-prazo">Prazo / atraso (dias)</label>
+    <input id="au-prazo" name="prazo_dias" type="number" min="0" value="1">
+    <div class="dialog-actions">
+      <button type="button" onclick="document.getElementById('modal-automacao').close()">Cancelar</button>
+      <button type="submit" class="primary">Ativar automação</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+  // Dados injetados pelo backend Flask via Jinja (ver exemplo de rota fornecido junto ao template)
+  const dadosFunil = {{ grafico_funil|tojson }};
+  const dadosReceita = {{ grafico_receita|tojson }};
+
+  const fontePadrao = "'IBM Plex Sans', sans-serif";
+
+  new Chart(document.getElementById('grafico-funil'), {
+    type: 'bar',
+    data: {
+      labels: dadosFunil.labels,
+      datasets: [{
+        label: 'Negócios',
+        data: dadosFunil.valores,
+        backgroundColor: '#3C5A75',
+        borderRadius: 3,
+        maxBarThickness: 38
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { display: false } },
+        y: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { color: 'rgba(27,42,34,0.08)' } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById('grafico-receita'), {
+    type: 'line',
+    data: {
+      labels: dadosReceita.labels,
+      datasets: [{
+        label: 'Receita (R$)',
+        data: dadosReceita.valores,
+        borderColor: '#3F6B4F',
+        backgroundColor: 'rgba(63,107,79,0.12)',
+        fill: true,
+        tension: 0.35,
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { display: false } },
+        y: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { color: 'rgba(27,42,34,0.08)' } }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
