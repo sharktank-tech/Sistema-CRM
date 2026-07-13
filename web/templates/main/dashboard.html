@@ -37,17 +37,19 @@
   }
 
   *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body{
     margin:0;
     background: var(--ledger-cover);
     color: var(--ink);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
   h1,h2,h3{ font-family: var(--font-display); margin:0; font-weight:600; }
   a{ color: inherit; }
   button{ font-family: var(--font-body); cursor:pointer; }
+  img, svg{ max-width:100%; }
 
   /* ===================== ACESSIBILIDADE ===================== */
   .skip-link{
@@ -64,34 +66,37 @@
   /* ===================== CAPA / CABEÇALHO ===================== */
   .cover{
     background: linear-gradient(165deg, var(--ledger-cover), var(--ledger-cover-2));
-    padding: 1.4rem clamp(1.2rem, 4vw, 3rem) .6rem;
+    padding: 1.4rem clamp(1rem, 4vw, 3rem) .6rem;
     border-bottom: 1px solid var(--rule);
   }
   .cover-top{
     display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
   }
-  .brand{ display:flex; align-items:center; gap:.85rem; }
+  .brand{ display:flex; align-items:center; gap:.85rem; min-width:0; }
   .brand-mark{
     width:42px; height:42px; flex:none; display:grid; place-items:center;
     border:1.5px solid var(--brass); border-radius:50%;
     color: var(--brass-soft);
   }
-  .brand-text h1{ color: var(--paper-soft); font-size:1.15rem; letter-spacing:.01em; }
+  .brand-text{ min-width:0; }
+  .brand-text h1{ color: var(--paper-soft); font-size: clamp(1rem, 3.6vw, 1.15rem); letter-spacing:.01em; overflow-wrap:anywhere; }
   .brand-text p{ margin:.1rem 0 0; color: var(--brass-soft); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; }
 
-  .search-form{ flex:1; min-width:220px; max-width:420px; }
+  .search-form{ flex:1 1 220px; min-width:180px; max-width:420px; }
   .search-form input{
     width:100%; padding:.6rem .9rem; border-radius: var(--radius);
     border:1px solid rgba(201,162,39,.35); background: rgba(245,241,228,.06);
     color: var(--paper-soft); font-size:.88rem;
+    -webkit-appearance:none; appearance:none;
   }
   .search-form input::placeholder{ color: rgba(245,241,228,.55); }
   .search-form input:focus{ background: rgba(245,241,228,.12); }
 
-  .header-actions{ display:flex; align-items:center; gap:.8rem; }
+  .header-actions{ display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
   .btn-quick-add{
     background: var(--brass); color: var(--ledger-cover); border:none;
-    padding:.6rem 1rem; border-radius: var(--radius); font-weight:600; font-size:.84rem;
+    padding:.65rem 1rem; border-radius: var(--radius); font-weight:600; font-size:.84rem;
+    min-height:44px; white-space:nowrap;
   }
   .btn-quick-add:hover{ background: var(--brass-soft); }
   .user-chip{
@@ -99,23 +104,28 @@
   }
   .user-chip .avatar{
     width:30px; height:30px; border-radius:50%; background: var(--brass-soft); color: var(--ledger-cover);
-    display:grid; place-items:center; font-size:.78rem; font-weight:600;
+    display:grid; place-items:center; font-size:.78rem; font-weight:600; flex:none;
   }
 
   .ledger-nav{
     display:flex; gap:1.6rem; margin-top:1.1rem; padding-top:.7rem;
-    border-top: 1px dashed var(--rule); flex-wrap:wrap;
+    border-top: 1px dashed var(--rule);
+    flex-wrap:wrap;
+    overflow-x:auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .ledger-nav::-webkit-scrollbar{ display:none; }
   .ledger-nav a{
     color: var(--brass-soft); text-decoration:none; font-size:.78rem;
     letter-spacing:.07em; text-transform:uppercase; padding-bottom:.3rem;
-    border-bottom:2px solid transparent;
+    border-bottom:2px solid transparent; white-space:nowrap;
   }
   .ledger-nav a:hover{ border-bottom-color: var(--brass); }
 
   /* ===================== MAIN ===================== */
   main{ background: var(--paper); }
-  section{ padding: clamp(1.6rem, 4vw, 3rem); }
+  section{ padding: clamp(1.2rem, 4vw, 3rem); }
   .eyebrow{
     font-family: var(--font-mono); font-size:.72rem; letter-spacing:.12em;
     text-transform:uppercase; color: var(--ink-faint);
@@ -124,9 +134,10 @@
   /* ===================== FUNIL (elemento de assinatura) ===================== */
   .funnel-hero{ padding-bottom: 1.2rem; }
   .funnel-intro{ margin-bottom:1.6rem; }
-  .funnel-intro h2{ font-size:1.5rem; margin-top:.3rem; }
+  .funnel-intro h2{ font-size: clamp(1.15rem, 4.5vw, 1.5rem); margin-top:.3rem; }
   .funnel-stages{
     max-width:560px; margin:0 auto; display:flex; flex-direction:column; align-items:center;
+    width:100%;
   }
   .funnel-row{
     width:100%; display:flex; flex-direction:column; align-items:center; gap:.5rem;
@@ -141,11 +152,15 @@
   @keyframes rise{ to{ opacity:1; transform:none; } }
 
   .funnel-shape{
-    height:58px; border-top:2px solid rgba(255,255,255,.35);
+    height:58px; width: 100%; max-width: 100%; min-width: 0;
+    border-top:2px solid rgba(255,255,255,.35);
     clip-path: polygon(3% 0, 97% 0, 90% 100%, 10% 100%);
     display:flex; align-items:center; justify-content:center;
   }
-  .funnel-info{ display:flex; gap:.9rem; align-items:baseline; font-size:.84rem; }
+  .funnel-info{
+    display:flex; gap:.9rem; align-items:baseline; font-size:.84rem;
+    flex-wrap:wrap; justify-content:center; text-align:center;
+  }
   .funnel-stage-name{ font-weight:600; }
   .funnel-stage-count{ color: var(--ink-soft); }
   .funnel-stage-value{ font-family: var(--font-mono); color: var(--ink-soft); }
@@ -154,7 +169,7 @@
   .conv-badge{
     font-family: var(--font-mono); font-size:.72rem; color: var(--brass);
     border:1px solid var(--brass); border-radius:50%;
-    width:38px; height:38px; display:grid; place-items:center;
+    width:38px; height:38px; display:grid; place-items:center; flex:none;
   }
 
   .bg-blue{ background: var(--stamp-blue); }
@@ -171,10 +186,12 @@
   .metric-card{
     background: var(--paper-soft); border:1px solid var(--rule);
     border-radius: var(--radius); padding:1.1rem 1.2rem; box-shadow: var(--shadow-card);
+    min-width:0;
   }
   .metric-label{ display:block; font-size:.74rem; color: var(--ink-faint); letter-spacing:.04em; }
   .metric-value{
-    display:block; font-family: var(--font-display); font-size:1.7rem; margin:.25rem 0;
+    display:block; font-family: var(--font-display); font-size: clamp(1.3rem, 5vw, 1.7rem); margin:.25rem 0;
+    overflow-wrap:anywhere;
   }
   .metric-delta{ font-family: var(--font-mono); font-size:.76rem; }
   .metric-delta.up{ color: var(--stamp-green); }
@@ -184,13 +201,14 @@
   .panel{
     background: var(--paper-soft); border:1px solid var(--rule);
     border-radius: var(--radius); box-shadow: var(--shadow-card);
+    min-width:0;
   }
   .panel-header{
     display:flex; align-items:baseline; justify-content:space-between;
-    padding:1.1rem 1.3rem; border-bottom:1px solid var(--rule);
+    padding:1.1rem 1.3rem; border-bottom:1px solid var(--rule); gap:.6rem; flex-wrap:wrap;
   }
   .panel-header h3{ font-size:1rem; }
-  .panel-meta{ font-family: var(--font-mono); font-size:.76rem; color: var(--ink-faint); }
+  .panel-meta{ font-family: var(--font-mono); font-size:.76rem; color: var(--ink-faint); white-space:nowrap; }
 
   /* ===================== GRID PRINCIPAL ===================== */
   .main-grid{
@@ -198,20 +216,23 @@
   }
 
   /* tabela de contatos */
-  .contacts-table{ width:100%; border-collapse:collapse; font-size:.86rem; }
+  .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling: touch; }
+  .contacts-table{ width:100%; min-width:560px; border-collapse:collapse; font-size:.86rem; }
   .contacts-table th{
     text-align:left; padding:.7rem 1.3rem; font-size:.72rem; letter-spacing:.05em;
     text-transform:uppercase; color: var(--ink-faint); border-bottom:1px solid var(--rule);
+    white-space:nowrap;
   }
   .contacts-table td{ padding:.75rem 1.3rem; border-bottom:1px solid var(--rule); vertical-align:middle; }
   .contacts-table tr:last-child td{ border-bottom:none; }
   .avatar{
     display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%;
     background: var(--stamp-blue-soft); color: var(--stamp-blue); font-size:.7rem; font-weight:600;
-    margin-right:.5rem; font-family: var(--font-mono);
+    margin-right:.5rem; font-family: var(--font-mono); flex:none;
   }
   .stage-pill{
     font-family: var(--font-mono); font-size:.72rem; padding:.2rem .55rem; border-radius:999px;
+    white-space:nowrap;
   }
   .stage-blue{ background: var(--stamp-blue-soft); color: var(--stamp-blue); }
   .stage-amber{ background: var(--stamp-amber-soft); color: var(--stamp-amber); }
@@ -228,53 +249,56 @@
   .task-list{ list-style:none; margin:0; padding:0; }
   .task-item{
     display:flex; gap:.7rem; align-items:flex-start; padding:.85rem 1.3rem;
-    border-bottom:1px solid var(--rule);
+    border-bottom:1px solid var(--rule); flex-wrap:wrap;
   }
   .task-item:last-child{ border-bottom:none; }
   .task-item.overdue{ background: var(--stamp-red-soft); }
   .task-item.done .task-title{ text-decoration: line-through; color: var(--ink-faint); }
   .task-type-badge{
     font-family: var(--font-mono); font-size:.65rem; text-transform:uppercase; letter-spacing:.04em;
-    padding:.2rem .4rem; border-radius:3px; white-space:nowrap; margin-top:.1rem;
+    padding:.2rem .4rem; border-radius:3px; white-space:nowrap; margin-top:.1rem; flex:none;
   }
   .badge-tarefa{ background: var(--stamp-blue-soft); color: var(--stamp-blue); }
   .badge-lembrete{ background: var(--stamp-amber-soft); color: var(--stamp-amber); }
   .badge-automacao{ background: var(--stamp-violet-soft); color: var(--stamp-violet); }
-  .task-title{ margin:0; font-size:.86rem; font-weight:500; }
-  .task-meta{ margin:.15rem 0 0; font-size:.76rem; color: var(--ink-faint); font-family: var(--font-mono); }
+  .task-body{ min-width:0; flex:1 1 160px; }
+  .task-title{ margin:0; font-size:.86rem; font-weight:500; overflow-wrap:anywhere; }
+  .task-meta{ margin:.15rem 0 0; font-size:.76rem; color: var(--ink-faint); font-family: var(--font-mono); overflow-wrap:anywhere; }
   .automation-cta{
     display:block; width:calc(100% - 2.6rem); margin:1rem 1.3rem 1.3rem;
     background:none; border:1px dashed var(--ink-faint); color: var(--ink-soft);
-    padding:.65rem; border-radius: var(--radius); font-size:.82rem;
+    padding:.75rem; border-radius: var(--radius); font-size:.82rem; min-height:44px;
   }
   .automation-cta:hover{ border-color: var(--brass); color: var(--ink); }
 
   /* relatórios */
   .reports-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:1.3rem; }
-  .chart-panel{ padding:1.2rem 1.3rem 1.4rem; }
+  .chart-panel{ padding:1.2rem 1.3rem 1.4rem; min-width:0; }
   .chart-panel h3{ font-size:.95rem; margin-bottom:.8rem; }
-  .chart-panel canvas{ max-height:240px; }
+  .chart-panel canvas{ max-height:240px; max-width:100%; }
 
   footer{
     background: var(--ledger-cover); color: rgba(245,241,228,.55);
-    text-align:center; padding:1.2rem; font-size:.78rem; font-family: var(--font-mono);
+    text-align:center; padding:1.2rem 1rem; font-size:.78rem; font-family: var(--font-mono);
   }
 
   /* ===================== DIALOGS ===================== */
   dialog{
-    border:none; border-radius: var(--radius); padding:0; max-width:420px; width:90%;
+    border:none; border-radius: var(--radius); padding:0;
+    max-width:420px; width:92vw;
+    max-height: 88vh; overflow-y:auto;
     box-shadow: 0 12px 40px rgba(0,0,0,.25);
   }
   dialog::backdrop{ background: rgba(14,36,32,.55); }
-  .dialog-inner{ padding:1.4rem 1.5rem; }
-  .dialog-inner h3{ margin-bottom:1rem; }
+  .dialog-inner{ padding: clamp(1.1rem, 4vw, 1.4rem) clamp(1.1rem, 4.5vw, 1.5rem); }
+  .dialog-inner h3{ margin-bottom:1rem; font-size: clamp(1.05rem, 4vw, 1.2rem); }
   .dialog-inner label{ display:block; font-size:.78rem; color: var(--ink-soft); margin:.7rem 0 .25rem; }
   .dialog-inner input, .dialog-inner select{
-    width:100%; padding:.55rem .7rem; border:1px solid var(--rule); border-radius:3px; font-size:.86rem;
+    width:100%; padding:.6rem .7rem; border:1px solid var(--rule); border-radius:3px; font-size:16px;
     font-family: var(--font-body); background: var(--paper-soft); color: var(--ink);
   }
-  .dialog-actions{ display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.3rem; }
-  .dialog-actions button{ padding:.55rem 1rem; border-radius:3px; font-size:.84rem; border:1px solid var(--rule); background:none; }
+  .dialog-actions{ display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.3rem; flex-wrap:wrap; }
+  .dialog-actions button{ padding:.65rem 1rem; border-radius:3px; font-size:.84rem; border:1px solid var(--rule); background:none; min-height:44px; }
   .dialog-actions .primary{ background: var(--ledger-cover); color: var(--paper-soft); border-color: var(--ledger-cover); }
 
   /* ===================== RESPONSIVO ===================== */
@@ -283,10 +307,38 @@
     .reports-grid{ grid-template-columns: 1fr; }
     .metrics-row{ grid-template-columns: repeat(2, 1fr); }
   }
+
+  @media (max-width: 720px){
+    .cover-top{ gap:.9rem; }
+    .search-form{ order:3; flex-basis:100%; max-width:none; }
+    .header-actions{ order:2; margin-left:auto; }
+    .brand{ order:1; }
+    .user-chip span:last-child{ display:none; }
+    .ledger-nav{ gap:1.1rem; justify-content:flex-start; }
+  }
+
   @media (max-width: 560px){
     .metrics-row{ grid-template-columns: 1fr; }
-    .contacts-table{ font-size:.8rem; }
-    .contacts-table th:nth-child(2), .contacts-table td:nth-child(2){ display:none; }
+    section{ padding: 1.1rem 1rem; }
+    .cover{ padding: 1.1rem 1rem .5rem; }
+    .funnel-info{ font-size:.78rem; gap:.5rem; }
+    .panel-header{ padding:1rem; }
+    .table-scroll{ margin: 0; }
+    .contacts-table th, .contacts-table td{ padding:.65rem 1rem; }
+    .task-item{ padding:.75rem 1rem; }
+    .automation-cta{ width:calc(100% - 2rem); margin:1rem; }
+    .reports-grid{ gap:1rem; }
+    .chart-panel{ padding:1rem; }
+    .chart-panel canvas{ max-height:200px; }
+    .dialog-actions{ flex-direction:column-reverse; }
+    .dialog-actions button{ width:100%; }
+  }
+
+  @media (max-width: 400px){
+    .brand-text h1{ font-size:.95rem; }
+    .btn-quick-add{ padding:.6rem .85rem; font-size:.8rem; }
+    .funnel-shape{ height:48px; }
+    .conv-badge{ width:34px; height:34px; font-size:.68rem; }
   }
 </style>
 </head>
@@ -336,7 +388,7 @@
   <section id="funil" class="funnel-hero" aria-labelledby="funil-titulo">
     <div class="funnel-intro">
       <span class="eyebrow">Funil de vendas</span>
-      <h2 id="funil-titulo">Da prospecção ao pós-venda — {{ periodo_funil|default('mês atual') }}</h2>
+      <h2 id="funil-titulo">Da prospecção ao pós-venda — {{ periodo_funil.criado_em|default('mês atual') }}</h2>
     </div>
 
     <div class="funnel-stages">
@@ -385,6 +437,7 @@
           <h3 id="contatos-titulo">Contatos</h3>
           <span class="panel-meta">{{ contatos|length }} no total</span>
         </div>
+        <div class="table-scroll">
         <table class="contacts-table">
           <thead>
             <tr>
@@ -413,13 +466,14 @@
                 </span>
                 {{ c.ultima_interacao.resumo }} · {{ c.ultima_interacao.data }}
               </td>
-              <td><a class="row-link" href="{{ url_for('contato_detalhe', contato_id=c.id) }}">Histórico</a></td>
+              <td><a class="row-link" href="{{ url_for('main.contato_detalhe', contato_id=c.id) }}">Histórico</a></td>
             </tr>
             {% else %}
             <tr><td colspan="5" class="empty-state">Nenhum contato cadastrado ainda. Use "Novo contato" para começar.</td></tr>
             {% endfor %}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div class="panel" id="tarefas" aria-labelledby="tarefas-titulo">
@@ -451,7 +505,7 @@
   <!-- ===================== RELATÓRIOS ===================== -->
   <section id="relatorios" aria-labelledby="relatorios-titulo">
     <span class="eyebrow">Relatórios e métricas</span>
-    <h2 id="relatorios-titulo" style="font-size:1.3rem; margin:.4rem 0 1.2rem;">Desempenho comercial</h2>
+    <h2 id="relatorios-titulo" style="font-size: clamp(1.1rem, 4.5vw, 1.3rem); margin:.4rem 0 1.2rem;">Desempenho comercial</h2>
     <div class="reports-grid">
       <div class="panel chart-panel">
         <h3>Conversão por etapa do funil</h3>
@@ -542,6 +596,7 @@
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { display: false } },
@@ -566,6 +621,7 @@
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { display: false } },

@@ -1,4 +1,6 @@
 from flask import Blueprint, render_template, redirect,request, url_for
+from web.modules.model import *
+from flask_login import login_required, current_user
 
 main_bp = Blueprint('main', __name__)
 
@@ -7,81 +9,35 @@ main_bp = Blueprint('main', __name__)
 # ===== Rota principal dashboard
 @main_bp.route('/')
 def dashboard():
+    empresa_nome = Empresa.query.all()
+    usuario = current_user
+    periodo_funil = "Junho 2026"
+    funil = EtapaFunil.query.all()
+    metricas = ReceitaMensal.query.all()
+    contatos = Contato.query.all()
+    tarefas = Tarefa.query.all()
+    grafico_funil = {
+        "labels": ["Prospecção", "Qualificação", "Fechamento"],
+        "valores": [50, 40, 24]
+    },
+    grafico_receita = {
+        "labels": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+        "valores": [5000, 7000, 10000, 13000, 15000, 18000]
+    },
+    data_atualizacao = "18/06/2026"
+
     return render_template(
         "main/dashboard.html",
-
-        empresa_nome="Minha Empresa",
-        usuario={
-            "nome": "Danilo",
-            "iniciais": "DC"
-        },
-
-        periodo_funil="Junho 2026",
-
-        funil=[
-            {
-                "nome": "Prospecção",
-                "quantidade": 50,
-                "valor_total": "35.000",
-                "largura_pct": 100,
-                "cor": "blue",
-                "conversao_pct": 80
-            },
-            {
-                "nome": "Qualificação",
-                "quantidade": 40,
-                "valor_total": "28.000",
-                "largura_pct": 80,
-                "cor": "amber",
-                "conversao_pct": 60
-            },
-            {
-                "nome": "Fechamento",
-                "quantidade": 24,
-                "valor_total": "18.000",
-                "largura_pct": 50,
-                "cor": "green",
-                "conversao_pct": 0
-            }
-        ],
-
-        metricas=[
-            {
-                "label": "Receita",
-                "valor": "R$ 18.000",
-                "delta": 12
-            },
-            {
-                "label": "Novos contatos",
-                "valor": 50,
-                "delta": 8
-            },
-            {
-                "label": "Conversões",
-                "valor": 24,
-                "delta": -3
-            },
-            {
-                "label": "Ticket médio",
-                "valor": "R$ 750",
-                "delta": 5
-            }
-        ],
-
-        contatos=[],
-        tarefas=[],
-
-        grafico_funil={
-            "labels": ["Prospecção", "Qualificação", "Fechamento"],
-            "valores": [50, 40, 24]
-        },
-
-        grafico_receita={
-            "labels": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
-            "valores": [5000, 7000, 10000, 13000, 15000, 18000]
-        },
-
-        data_atualizacao="18/06/2026"
+        empresa=empresa_nome,
+        usuario=usuario,
+        periodo_funil=periodo_funil,
+        contatos=contatos,
+        funil=funil,
+        metricas=metricas,
+        grafico_receita=grafico_receita,
+        data_atualizacao=data_atualizacao,
+        tarefas=tarefas,
+        grafico_funil=grafico_funil
     )
 
 # Rota para buscar informações par ao front-end
@@ -93,12 +49,14 @@ def buscar():
 # ===== Contato =====
 
 # Rota para contato
-@main_bp.route('/contato/<id>')
+@main_bp.route('/contato/<contato_id>')
 def contato_detalhe(contato_id):
     # consultar banco
+    info_contatos  = Contato
+    print(info_contatos)
     return render_template(
         "contato.html",
-        contato={}
+        contato={info_contatos},
     )
 
 # Rota para criar o contato
@@ -112,7 +70,7 @@ def criar_contato():
 
     # salvar no banco
 
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("main.dashboard"))
 
 # ===== Automação =====
 
