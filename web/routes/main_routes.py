@@ -11,7 +11,7 @@ main_bp = Blueprint('main', __name__)
 def dashboard():
     empresa_nome = Empresa.query.all()
     usuario = current_user
-    periodo_funil = "Junho 2026"
+    periodo_funil = Empresa
     funil = EtapaFunil.query.all()
     metricas = ReceitaMensal.query.all()
     contatos = Contato.query.all()

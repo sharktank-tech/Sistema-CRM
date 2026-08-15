@@ -23,11 +23,8 @@ class Usuario(db.Model):
 
 class Empresa(db.Model):
     __tablename__ = "empresas"
-
     id = db.Column(db.Integer, primary_key=True)
-
     nome = db.Column(db.String(150), nullable=False)
-
     criado_em = db.Column(
         db.DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
@@ -41,14 +38,11 @@ class EtapaFunil(db.Model):
     __tablename__ = "etapas_funil"
 
     id = db.Column(db.Integer, primary_key=True)
-
     nome = db.Column(db.String(50), nullable=False)
     ordem = db.Column(db.Integer, nullable=False)
     cor = db.Column(db.String(20), nullable=False)
-
     largura_pct = db.Column(db.Integer, default=100)
     conversao_pct = db.Column(db.Integer, default=0)
-
     contatos = db.relationship(
         "Contato",
         back_populates="etapa",
@@ -116,21 +110,15 @@ class Tarefa(db.Model):
     __tablename__ = "tarefas"
 
     id = db.Column(db.Integer, primary_key=True)
-
     titulo = db.Column(db.String(200), nullable=False)
     descricao = db.Column(db.Text)
-
     concluida = db.Column(db.Boolean, default=False)
-
     vencimento = db.Column(db.Date)
-
     contato_id = db.Column(
         db.Integer,
         db.ForeignKey("contatos.id")
     )
-
     contato = db.relationship("Contato")
-
     criado_em = db.Column(
         db.DateTime(timezone=True),
         default=lambda: datetime.now(UTC)
@@ -144,14 +132,10 @@ class ReceitaMensal(db.Model):
     __tablename__ = "receitas_mensais"
 
     id = db.Column(db.Integer, primary_key=True)
-
     ano = db.Column(db.Integer, nullable=False)
     mes = db.Column(db.Integer, nullable=False)
-
     valor = db.Column(db.Numeric(12, 2), nullable=False)
-
     delta = db.Column(db.Integer, nullable=False)
-
     criado_em = db.Column(
         db.DateTime(timezone=True),
         default=lambda: datetime.now(UTC)

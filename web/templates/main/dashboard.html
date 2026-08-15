@@ -3,342 +3,1020 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5fbf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a1220" media="(prefers-color-scheme: dark)">
 <title>{{ titulo_pagina|default('Painel Comercial') }} · CRM</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="fivi-icon" href="static/img/favi-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-  /* ===================== TOKENS ===================== */
   :root{
-    --ledger-cover: #0E2420;
-    --ledger-cover-2: #163530;
-    --paper: #ECE6D4;
-    --paper-soft: #F5F1E4;
-    --ink: #1B2A22;
-    --ink-soft: #51604F;
-    --ink-faint: #8A9389;
-    --brass: #C9A227;
-    --brass-soft: #E4C861;
-    --rule: rgba(201, 162, 39, 0.28);
-    --stamp-red: #A23B2E;
-    --stamp-red-soft: #F1DAD3;
-    --stamp-green: #3F6B4F;
-    --stamp-green-soft: #DCE7DC;
-    --stamp-blue: #3C5A75;
-    --stamp-blue-soft: #DAE2E7;
-    --stamp-amber: #C98A2B;
-    --stamp-amber-soft: #F1E2C4;
-    --stamp-violet: #6B4E71;
-    --stamp-violet-soft: #E7DDE8;
-    --font-display: 'Fraunces', 'Iowan Old Style', Georgia, serif;
-    --font-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
-    --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
-    --radius: 3px;
-    --shadow-card: 0 1px 2px rgba(20,30,24,0.06), 0 6px 16px rgba(20,30,24,0.07);
+    color-scheme:light dark;
+
+    /* Base: tema claro */
+    --cover:#0e2420;
+    --cover-2:#163530;
+    --page:#f5fbf8;
+    --surface:#f9fdfb;
+    --surface-2:#ffffff;
+    --surface-raised:#ffffff;
+    --subtle-bg:#eef8f3;
+    --hover-bg:#e2f4eb;
+    --track-bg:#dcebe4;
+
+    --ink:#10261d;
+    --muted:#425e52;
+    --faint:#5f746a;
+    --link:#087f69;
+    --line:rgba(16,38,29,.12);
+    --line-strong:rgba(16,38,29,.28);
+
+    --accent:#e6b400;
+    --accent-2:#ffd24a;
+    --accent-soft:#fff7cf;
+    --accent-text:#6d5200;
+    --accent-border:rgba(230,180,0,.58);
+    --accent-contrast:#10261d;
+
+    --danger:#b52f37;
+    --danger-bg:#ffe6e7;
+    --success:#116b3d;
+    --success-bg:#dcf8e9;
+    --blue:#1d4ed8;
+    --blue-bg:#e4efff;
+    --amber:#9a4d00;
+    --amber-bg:#fff0d5;
+    --violet:#7b3fc5;
+    --violet-bg:#f0e5ff;
+
+    --header-bg:rgba(255,255,255,.96);
+    --header-text:#10261d;
+    --header-muted:#4c665a;
+    --header-line:rgba(16,38,29,.10);
+    --header-control-bg:#ffffff;
+    --header-control-border:rgba(16,38,29,.20);
+    --header-control-text:#10261d;
+    --header-control-placeholder:#63786d;
+    --header-nav-hover:#e6f7ef;
+    --header-avatar-bg:#fff0ae;
+    --header-mark-bg:#e8f8f1;
+
+    --input-bg:#ffffff;
+    --focus-ring:#087a63;
+
+    /* Controles de destaque no tema claro */
+    --strong-control-bg:#087a63;
+    --strong-control-hover:#066451;
+    --strong-control-text:#ffffff;
+    --fab-text:#ffffff;
+
+    --backdrop:rgba(10,23,19,.54);
+
+    --chart-text:#3f5e51;
+    --chart-grid:rgba(16,38,29,.10);
+    --chart-blue:#2563eb;
+    --chart-green:#16a34a;
+    --chart-green-fill:rgba(22,163,74,.14);
+    --chart-tooltip-bg:#10261d;
+    --chart-tooltip-text:#ffffff;
+
+    --radius-sm:7px;
+    --radius:12px;
+    --radius-lg:16px;
+    --shadow:0 1px 2px rgba(15,77,58,.05),0 10px 30px rgba(24,112,82,.08);
+    --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
+    --font-body:'IBM Plex Sans','Segoe UI',Arial,sans-serif;
+    --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+    --max:1480px;
   }
 
-  *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --page:#0a1220;
+      --surface:#0f1b2d;
+      --surface-2:#132238;
+      --surface-raised:#182a44;
+      --subtle-bg:#101d30;
+      --hover-bg:#1d3150;
+      --track-bg:#243a5a;
+
+      --ink:#f4f7fb;
+      --muted:#c3cee0;
+      --faint:#a9b8ce;
+      --link:#7fc4ff;
+      --line:rgba(214,228,255,.14);
+      --line-strong:rgba(214,228,255,.26);
+
+      --accent:#e2b659;
+      --accent-2:#f0cb72;
+      --accent-soft:#332d19;
+      --accent-text:#f0cb72;
+      --accent-border:rgba(240,203,114,.46);
+      --accent-contrast:#101812;
+
+      --danger:#ee9a8b;
+      --danger-bg:#39231f;
+      --success:#8fc09f;
+      --success-bg:#1f3327;
+      --blue:#95b9da;
+      --blue-bg:#20303d;
+      --amber:#e8bd79;
+      --amber-bg:#382d1d;
+      --violet:#caa9d1;
+      --violet-bg:#33273a;
+
+      --header-bg:rgba(8,18,35,.97);
+      --header-text:#f5f8ff;
+      --header-muted:#bdc9dd;
+      --header-line:rgba(126,184,255,.22);
+      --header-control-bg:rgba(112,166,255,.09);
+      --header-control-border:rgba(164,199,255,.24);
+      --header-control-text:#f7faff;
+      --header-control-placeholder:#aebbd0;
+      --header-nav-hover:rgba(96,165,250,.13);
+      --header-avatar-bg:#1d3150;
+      --header-mark-bg:#142844;
+
+      --input-bg:#182a44;
+      --focus-ring:rgba(96,165,250,.78);
+
+      --strong-control-bg:#1d4ed8;
+      --strong-control-hover:#2563eb;
+      --strong-control-text:#ffffff;
+      --fab-text:#ffffff;
+
+      --backdrop:rgba(0,0,0,.66);
+
+      --chart-text:#c3cee0;
+      --chart-grid:rgba(214,228,255,.12);
+      --chart-blue:#6fb6ff;
+      --chart-green:#8fc09f;
+      --chart-green-fill:rgba(143,192,159,.13);
+      --chart-tooltip-bg:#edf5ff;
+      --chart-tooltip-text:#0b1526;
+
+      --shadow:0 1px 2px rgba(0,0,0,.26),0 12px 32px rgba(0,0,0,.22);
+    }
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
   body{
     margin:0;
-    background: var(--ledger-cover);
-    color: var(--ink);
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    min-width:320px;
+    background:var(--page);
+    color:var(--ink);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{ font-family: var(--font-display); margin:0; font-weight:600; }
-  a{ color: inherit; }
-  button{ font-family: var(--font-body); cursor:pointer; }
-  img, svg{ max-width:100%; }
+  h1,h2,h3,p{margin:0}
+  h1,h2,h3{font-family:var(--font-display)}
+  a{color:inherit}
+  button,input,select{font:inherit}
+  button{cursor:pointer}
+  svg{display:block}
+  [hidden]{display:none!important}
 
-  /* ===================== ACESSIBILIDADE ===================== */
+  .visually-hidden{
+    position:absolute!important;
+    width:1px!important;
+    height:1px!important;
+    padding:0!important;
+    margin:-1px!important;
+    overflow:hidden!important;
+    clip:rect(0,0,0,0)!important;
+    white-space:nowrap!important;
+    border:0!important;
+  }
   .skip-link{
-    position:absolute; left:-999px; top:0;
-    background: var(--brass-soft); color: var(--ledger-cover);
-    padding:.6rem 1rem; font-weight:600; z-index:999;
+    position:fixed;
+    left:1rem;
+    top:-4rem;
+    z-index:200;
+    background:var(--accent-2);
+    color:var(--accent-contrast);
+    padding:.7rem 1rem;
+    border-radius:8px;
+    font-weight:600;
+    transition:top .15s ease;
   }
-  .skip-link:focus{ left:1rem; top:1rem; }
-  :focus-visible{ outline: 2px solid var(--brass-soft); outline-offset: 2px; }
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior:auto !important; }
+  .skip-link:focus{top:1rem}
+  :focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
+
+  body,.topbar,.panel,.metric-card,.contacts-toolbar,.contacts-table th,
+  .contacts-table tr,.field-control input,.contacts-toolbar select,dialog,
+  .dialog-inner input,.dialog-inner select,.automation-cta,.updated-chip{
+    transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease;
   }
 
-  /* ===================== CAPA / CABEÇALHO ===================== */
-  .cover{
-    background: linear-gradient(165deg, var(--ledger-cover), var(--ledger-cover-2));
-    padding: 1.4rem clamp(1rem, 4vw, 3rem) .6rem;
-    border-bottom: 1px solid var(--rule);
+  @media (forced-colors:active){
+    *{forced-color-adjust:auto}
+    .metric-card::after{display:none}
+    .stage-bar{outline:1px solid CanvasText}
   }
-  .cover-top{
-    display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
   }
-  .brand{ display:flex; align-items:center; gap:.85rem; min-width:0; }
+
+  /* ===== HEADER ===== */
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:80;
+    color:var(--header-text);
+    background:var(--header-bg);
+    border-bottom:1px solid var(--header-line);
+    backdrop-filter:blur(12px);
+  }
+  .topbar-inner{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:.85rem clamp(1rem,3vw,2rem) .65rem;
+  }
+  .topbar-main{
+    display:grid;
+    grid-template-columns:minmax(220px,auto) minmax(240px,520px) auto;
+    align-items:center;
+    gap:1rem;
+  }
+  .brand{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:.8rem;
+    text-decoration:none;
+  }
   .brand-mark{
-    width:42px; height:42px; flex:none; display:grid; place-items:center;
-    border:1.5px solid var(--brass); border-radius:50%;
-    color: var(--brass-soft);
+    flex:none;
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    border:1px solid var(--accent-border);
+    border-radius:11px;
+    color:var(--accent-2);
+    background:var(--header-mark-bg);
   }
-  .brand-text{ min-width:0; }
-  .brand-text h1{ color: var(--paper-soft); font-size: clamp(1rem, 3.6vw, 1.15rem); letter-spacing:.01em; overflow-wrap:anywhere; }
-  .brand-text p{ margin:.1rem 0 0; color: var(--brass-soft); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; }
-
-  .search-form{ flex:1 1 220px; min-width:180px; max-width:420px; }
-  .search-form input{
-    width:100%; padding:.6rem .9rem; border-radius: var(--radius);
-    border:1px solid rgba(201,162,39,.35); background: rgba(245,241,228,.06);
-    color: var(--paper-soft); font-size:.88rem;
-    -webkit-appearance:none; appearance:none;
+  .brand-copy{min-width:0}
+  .brand-copy strong{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-family:var(--font-display);
+    font-size:1.02rem;
+    font-weight:600;
   }
-  .search-form input::placeholder{ color: rgba(245,241,228,.55); }
-  .search-form input:focus{ background: rgba(245,241,228,.12); }
-
-  .header-actions{ display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
-  .btn-quick-add{
-    background: var(--brass); color: var(--ledger-cover); border:none;
-    padding:.65rem 1rem; border-radius: var(--radius); font-weight:600; font-size:.84rem;
-    min-height:44px; white-space:nowrap;
-  }
-  .btn-quick-add:hover{ background: var(--brass-soft); }
-  .user-chip{
-    display:flex; align-items:center; gap:.5rem; color: var(--paper-soft); font-size:.82rem;
-  }
-  .user-chip .avatar{
-    width:30px; height:30px; border-radius:50%; background: var(--brass-soft); color: var(--ledger-cover);
-    display:grid; place-items:center; font-size:.78rem; font-weight:600; flex:none;
+  .brand-copy small{
+    display:block;
+    margin-top:.06rem;
+    color:var(--header-muted);
+    font-size:.68rem;
+    letter-spacing:.07em;
+    text-transform:uppercase;
   }
 
-  .ledger-nav{
-    display:flex; gap:1.6rem; margin-top:1.1rem; padding-top:.7rem;
-    border-top: 1px dashed var(--rule);
-    flex-wrap:wrap;
-    overflow-x:auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+  .global-search{position:relative;min-width:0}
+  .global-search svg{
+    position:absolute;
+    left:.8rem;
+    top:50%;
+    transform:translateY(-50%);
+    width:17px;
+    height:17px;
+    color:var(--header-control-placeholder);
+    pointer-events:none;
   }
-  .ledger-nav::-webkit-scrollbar{ display:none; }
-  .ledger-nav a{
-    color: var(--brass-soft); text-decoration:none; font-size:.78rem;
-    letter-spacing:.07em; text-transform:uppercase; padding-bottom:.3rem;
-    border-bottom:2px solid transparent; white-space:nowrap;
-  }
-  .ledger-nav a:hover{ border-bottom-color: var(--brass); }
-
-  /* ===================== MAIN ===================== */
-  main{ background: var(--paper); }
-  section{ padding: clamp(1.2rem, 4vw, 3rem); }
-  .eyebrow{
-    font-family: var(--font-mono); font-size:.72rem; letter-spacing:.12em;
-    text-transform:uppercase; color: var(--ink-faint);
-  }
-
-  /* ===================== FUNIL (elemento de assinatura) ===================== */
-  .funnel-hero{ padding-bottom: 1.2rem; }
-  .funnel-intro{ margin-bottom:1.6rem; }
-  .funnel-intro h2{ font-size: clamp(1.15rem, 4.5vw, 1.5rem); margin-top:.3rem; }
-  .funnel-stages{
-    max-width:560px; margin:0 auto; display:flex; flex-direction:column; align-items:center;
+  .global-search input{
     width:100%;
+    height:42px;
+    padding:.55rem 4rem .55rem 2.35rem;
+    border:1px solid var(--header-control-border);
+    border-radius:10px;
+    background:var(--header-control-bg);
+    color:var(--header-control-text);
+    outline:none;
   }
-  .funnel-row{
-    width:100%; display:flex; flex-direction:column; align-items:center; gap:.5rem;
-    opacity:0; transform: translateY(8px);
-    animation: rise .5s ease forwards;
+  .global-search input::placeholder{color:var(--header-control-placeholder)}
+  .global-search input:focus{
+    border-color:var(--focus-ring);
+    background:var(--surface-raised);
+    box-shadow:0 0 0 3px color-mix(in srgb,var(--focus-ring) 24%,transparent);
   }
-  .funnel-row:nth-child(1){ animation-delay:.02s; }
-  .funnel-row:nth-child(3){ animation-delay:.10s; }
-  .funnel-row:nth-child(5){ animation-delay:.18s; }
-  .funnel-row:nth-child(7){ animation-delay:.26s; }
-  .funnel-row:nth-child(9){ animation-delay:.34s; }
-  @keyframes rise{ to{ opacity:1; transform:none; } }
-
-  .funnel-shape{
-    height:58px; width: 100%; max-width: 100%; min-width: 0;
-    border-top:2px solid rgba(255,255,255,.35);
-    clip-path: polygon(3% 0, 97% 0, 90% 100%, 10% 100%);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .funnel-info{
-    display:flex; gap:.9rem; align-items:baseline; font-size:.84rem;
-    flex-wrap:wrap; justify-content:center; text-align:center;
-  }
-  .funnel-stage-name{ font-weight:600; }
-  .funnel-stage-count{ color: var(--ink-soft); }
-  .funnel-stage-value{ font-family: var(--font-mono); color: var(--ink-soft); }
-
-  .funnel-divider{ display:flex; align-items:center; gap:.5rem; margin:.25rem 0; }
-  .conv-badge{
-    font-family: var(--font-mono); font-size:.72rem; color: var(--brass);
-    border:1px solid var(--brass); border-radius:50%;
-    width:38px; height:38px; display:grid; place-items:center; flex:none;
+  .shortcut-hint{
+    position:absolute;
+    right:.65rem;
+    top:50%;
+    transform:translateY(-50%);
+    padding:.12rem .4rem;
+    border:1px solid var(--header-control-border);
+    border-radius:5px;
+    color:var(--header-muted);
+    font:500 .68rem var(--font-mono);
   }
 
-  .bg-blue{ background: var(--stamp-blue); }
-  .bg-amber{ background: var(--stamp-amber); }
-  .bg-green{ background: var(--stamp-green); }
-  .bg-red{ background: var(--stamp-red); }
-  .bg-violet{ background: var(--stamp-violet); }
+  .header-actions{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    gap:.6rem;
+  }
+  .primary-btn,.ghost-btn,.icon-btn{
+    border-radius:9px;
+    min-height:40px;
+    font-weight:600;
+  }
+  .primary-btn{
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:var(--accent-contrast);
+    padding:.55rem .9rem;
+  }
+  .primary-btn:hover{background:var(--accent-2);border-color:var(--accent-2)}
+  .user-chip{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    max-width:190px;
+    color:var(--header-text);
+    font-size:.8rem;
+  }
+  .user-avatar{
+    flex:none;
+    width:32px;
+    height:32px;
+    display:grid;
+    place-items:center;
+    border-radius:9px;
+    background:var(--header-avatar-bg);
+    color:var(--accent-text);
+    font:600 .72rem var(--font-mono);
+  }
+  .user-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
 
-  /* ===================== MÉTRICAS ===================== */
-  .metrics-row{
-    display:grid; grid-template-columns: repeat(4, 1fr); gap:1rem;
-    padding-top:0;
+  .section-nav{
+    display:flex;
+    gap:.35rem;
+    margin-top:.7rem;
+    overflow:auto;
+    scrollbar-width:none;
+  }
+  .section-nav::-webkit-scrollbar{display:none}
+  .section-nav a{
+    flex:none;
+    padding:.38rem .62rem;
+    border-radius:7px;
+    color:var(--header-muted);
+    text-decoration:none;
+    font-size:.74rem;
+    font-weight:500;
+  }
+  .section-nav a:hover,
+  .section-nav a[aria-current="location"]{
+    background:var(--header-nav-hover);
+    color:var(--accent-text);
+  }
+
+  /* ===== LAYOUT ===== */
+  main{
+    max-width:var(--max);
+    margin:0 auto;
+    padding:clamp(1rem,3vw,2rem);
+  }
+  section{scroll-margin-top:120px}
+  .dashboard-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:1.2rem;
+    margin:.25rem 0 1.2rem;
+  }
+  .eyebrow{
+    display:block;
+    margin-bottom:.35rem;
+    color:var(--faint);
+    font:500 .69rem var(--font-mono);
+    letter-spacing:.11em;
+    text-transform:uppercase;
+  }
+  .dashboard-head h1{
+    font-size:clamp(1.45rem,3vw,2.15rem);
+    line-height:1.1;
+  }
+  .dashboard-head p{
+    margin-top:.4rem;
+    max-width:720px;
+    color:var(--muted);
+    font-size:.88rem;
+  }
+  .updated-chip{
+    flex:none;
+    color:var(--muted);
+    font:.72rem var(--font-mono);
+    background:var(--subtle-bg);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:.45rem .7rem;
+  }
+
+  /* ===== KPI ===== */
+  .metrics-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:.8rem;
+    margin-bottom:1rem;
   }
   .metric-card{
-    background: var(--paper-soft); border:1px solid var(--rule);
-    border-radius: var(--radius); padding:1.1rem 1.2rem; box-shadow: var(--shadow-card);
+    position:relative;
+    overflow:hidden;
     min-width:0;
+    padding:1rem 1.05rem;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
   }
-  .metric-label{ display:block; font-size:.74rem; color: var(--ink-faint); letter-spacing:.04em; }
+  .metric-card::after{
+    content:"";
+    position:absolute;
+    inset:auto 0 0;
+    height:3px;
+    background:linear-gradient(90deg,var(--accent),var(--success),transparent);
+    opacity:.78;
+  }
+  @media (prefers-color-scheme:dark){
+    .metric-card::after{
+      background:linear-gradient(90deg,var(--accent),transparent);
+      opacity:.55;
+    }
+  }
+  .metric-label{
+    display:block;
+    color:var(--muted);
+    font-size:.73rem;
+    font-weight:500;
+  }
   .metric-value{
-    display:block; font-family: var(--font-display); font-size: clamp(1.3rem, 5vw, 1.7rem); margin:.25rem 0;
+    display:block;
+    margin:.2rem 0 .18rem;
     overflow-wrap:anywhere;
+    font-family:var(--font-display);
+    font-size:clamp(1.35rem,3vw,1.8rem);
+    line-height:1.15;
   }
-  .metric-delta{ font-family: var(--font-mono); font-size:.76rem; }
-  .metric-delta.up{ color: var(--stamp-green); }
-  .metric-delta.down{ color: var(--stamp-red); }
+  .metric-delta{
+    display:flex;
+    align-items:center;
+    gap:.25rem;
+    color:var(--muted);
+    font:.69rem var(--font-mono);
+  }
+  .metric-delta.up{color:var(--success)}
+  .metric-delta.down{color:var(--danger)}
 
-  /* ===================== PAINÉIS GERAIS ===================== */
+  /* ===== PANELS ===== */
   .panel{
-    background: var(--paper-soft); border:1px solid var(--rule);
-    border-radius: var(--radius); box-shadow: var(--shadow-card);
     min-width:0;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow);
   }
   .panel-header{
-    display:flex; align-items:baseline; justify-content:space-between;
-    padding:1.1rem 1.3rem; border-bottom:1px solid var(--rule); gap:.6rem; flex-wrap:wrap;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+    padding:1rem 1.1rem;
+    border-bottom:1px solid var(--line);
   }
-  .panel-header h3{ font-size:1rem; }
-  .panel-meta{ font-family: var(--font-mono); font-size:.76rem; color: var(--ink-faint); white-space:nowrap; }
-
-  /* ===================== GRID PRINCIPAL ===================== */
-  .main-grid{
-    display:grid; grid-template-columns: 2fr 1fr; gap:1.3rem; align-items:start;
+  .panel-title-wrap{min-width:0}
+  .panel-header h2,.panel-header h3{
+    font-size:1.02rem;
+    line-height:1.2;
+  }
+  .panel-subtitle{
+    margin-top:.16rem;
+    color:var(--muted);
+    font-size:.74rem;
+  }
+  .panel-meta{
+    flex:none;
+    color:var(--faint);
+    font:.7rem var(--font-mono);
   }
 
-  /* tabela de contatos */
-  .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling: touch; }
-  .contacts-table{ width:100%; min-width:560px; border-collapse:collapse; font-size:.86rem; }
-  .contacts-table th{
-    text-align:left; padding:.7rem 1.3rem; font-size:.72rem; letter-spacing:.05em;
-    text-transform:uppercase; color: var(--ink-faint); border-bottom:1px solid var(--rule);
+  /* ===== COCKPIT ===== */
+  .cockpit-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.6fr) minmax(310px,.8fr);
+    gap:1rem;
+    margin-bottom:1rem;
+  }
+
+  /* Pipeline */
+  .pipeline-body{padding:1rem 1.1rem 1.1rem}
+  .funnel-list{
+    display:flex;
+    flex-direction:column;
+    gap:.45rem;
+  }
+  .funnel-stage{
+    display:grid;
+    grid-template-columns:minmax(130px,.85fr) minmax(180px,1.7fr) auto;
+    align-items:center;
+    gap:.9rem;
+    min-width:0;
+  }
+  .stage-label{min-width:0}
+  .stage-name{
+    display:block;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:.82rem;
+    font-weight:600;
+  }
+  .stage-count{
+    display:block;
+    margin-top:.05rem;
+    color:var(--faint);
+    font:.67rem var(--font-mono);
+  }
+  .stage-bar-track{
+    height:28px;
+    overflow:hidden;
+    border-radius:8px;
+    background:var(--track-bg);
+  }
+  .stage-bar{
+    width:var(--stage-width);
+    min-width:14px;
+    height:100%;
+    border-radius:8px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
+  }
+  .stage-value{
+    min-width:100px;
+    text-align:right;
+    color:var(--muted);
+    font:.7rem var(--font-mono);
     white-space:nowrap;
   }
-  .contacts-table td{ padding:.75rem 1.3rem; border-bottom:1px solid var(--rule); vertical-align:middle; }
-  .contacts-table tr:last-child td{ border-bottom:none; }
-  .avatar{
-    display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%;
-    background: var(--stamp-blue-soft); color: var(--stamp-blue); font-size:.7rem; font-weight:600;
-    margin-right:.5rem; font-family: var(--font-mono); flex:none;
+  .conversion-row{
+    display:grid;
+    grid-template-columns:minmax(130px,.85fr) minmax(180px,1.7fr) auto;
+    gap:.9rem;
+    align-items:center;
+    min-height:22px;
+  }
+  .conversion-line{
+    display:flex;
+    align-items:center;
+    gap:.45rem;
+    grid-column:2;
+    color:var(--faint);
+    font:.64rem var(--font-mono);
+  }
+  .conversion-line::before,
+  .conversion-line::after{
+    content:"";
+    height:1px;
+    flex:1;
+    background:var(--line);
+  }
+  .conversion-badge{
+    flex:none;
+    padding:.16rem .38rem;
+    border:1px solid var(--accent-border);
+    border-radius:999px;
+    color:var(--accent-text);
+    background:var(--accent-soft);
+  }
+  .bg-blue{background:var(--blue)}
+  .bg-amber{background:var(--amber)}
+  .bg-green{background:var(--success)}
+  .bg-red{background:var(--danger)}
+  .bg-violet{background:var(--violet)}
+
+  /* Tasks */
+  .task-toolbar{
+    display:flex;
+    gap:.35rem;
+    flex-wrap:wrap;
+    padding:.75rem 1rem .2rem;
+  }
+  .filter-chip{
+    min-height:32px;
+    padding:.32rem .55rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:transparent;
+    color:var(--muted);
+    font-size:.7rem;
+    font-weight:600;
+  }
+  .filter-chip:hover,.filter-chip.is-active{
+    background:var(--strong-control-bg);
+    border-color:var(--strong-control-bg);
+    color:var(--strong-control-text);
+  }
+  .filter-chip.is-active{box-shadow:0 3px 10px color-mix(in srgb,var(--strong-control-bg) 22%,transparent)}
+  .task-list{list-style:none;margin:0;padding:.35rem 0 0}
+  .task-item{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    gap:.65rem;
+    align-items:start;
+    padding:.75rem 1rem;
+    border-bottom:1px solid var(--line);
+  }
+  .task-item:last-child{border-bottom:0}
+  .task-item.overdue:not(.done){background:linear-gradient(90deg,var(--danger-bg),transparent 78%)}
+  .task-item.done{opacity:1}
+  .task-item.done .task-title{text-decoration:line-through;color:var(--muted)}
+  .task-item.done .task-meta{color:var(--faint)}
+  .task-badge{
+    margin-top:.05rem;
+    padding:.2rem .38rem;
+    border-radius:5px;
+    font:500 .6rem var(--font-mono);
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+  .badge-tarefa{background:var(--blue-bg);color:var(--blue)}
+  .badge-lembrete{background:var(--amber-bg);color:var(--amber)}
+  .badge-automacao{background:var(--violet-bg);color:var(--violet)}
+  .task-title{font-size:.8rem;font-weight:600;line-height:1.32;overflow-wrap:anywhere}
+  .task-meta{margin-top:.16rem;color:var(--faint);font:.65rem var(--font-mono);overflow-wrap:anywhere}
+  .automation-cta{
+    width:calc(100% - 2rem);
+    min-height:40px;
+    margin:.85rem 1rem 1rem;
+    border:1px dashed var(--line-strong);
+    border-radius:9px;
+    background:var(--subtle-bg);
+    color:var(--muted);
+    font-size:.75rem;
+    font-weight:600;
+  }
+  .automation-cta:hover{border-color:var(--accent);color:var(--ink)}
+
+  /* ===== CONTACTS ===== */
+  .contacts-panel{margin-bottom:1rem}
+  .contacts-toolbar{
+    display:grid;
+    grid-template-columns:minmax(180px,1fr) minmax(155px,220px);
+    gap:.6rem;
+    padding:.75rem 1rem;
+    border-bottom:1px solid var(--line);
+    background:var(--subtle-bg);
+  }
+  .field-control{
+    position:relative;
+    min-width:0;
+  }
+  .field-control svg{
+    position:absolute;
+    left:.72rem;
+    top:50%;
+    transform:translateY(-50%);
+    width:15px;
+    height:15px;
+    color:var(--faint);
+    pointer-events:none;
+  }
+  .field-control input,
+  .contacts-toolbar select{
+    width:100%;
+    height:38px;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--surface-2);
+    color:var(--ink);
+    font-size:.76rem;
+  }
+  .field-control input{padding:.45rem .7rem .45rem 2rem}
+  .contacts-toolbar select{padding:.45rem .7rem}
+  .field-control input:focus,.contacts-toolbar select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--focus-ring)}
+
+  .table-scroll{overflow-x:auto}
+  .contacts-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.78rem;
+  }
+  .contacts-table th{
+    position:sticky;
+    top:0;
+    z-index:2;
+    padding:.62rem 1rem;
+    border-bottom:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--faint);
+    text-align:left;
+    font-size:.64rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .contacts-table td{
+    padding:.68rem 1rem;
+    border-bottom:1px solid var(--line);
+    vertical-align:middle;
+  }
+  .contacts-table tbody tr:hover{background:var(--hover-bg)}
+  .contacts-table tbody tr:last-child td{border-bottom:0}
+  .contact-name-cell{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    min-width:160px;
+    font-weight:600;
+  }
+  .contact-avatar{
+    flex:none;
+    width:28px;
+    height:28px;
+    display:grid;
+    place-items:center;
+    border-radius:8px;
+    background:var(--blue-bg);
+    color:var(--blue);
+    font:600 .64rem var(--font-mono);
   }
   .stage-pill{
-    font-family: var(--font-mono); font-size:.72rem; padding:.2rem .55rem; border-radius:999px;
+    display:inline-flex;
+    align-items:center;
+    padding:.2rem .5rem;
+    border-radius:999px;
+    font:500 .63rem var(--font-mono);
     white-space:nowrap;
   }
-  .stage-blue{ background: var(--stamp-blue-soft); color: var(--stamp-blue); }
-  .stage-amber{ background: var(--stamp-amber-soft); color: var(--stamp-amber); }
-  .stage-green{ background: var(--stamp-green-soft); color: var(--stamp-green); }
-  .stage-red{ background: var(--stamp-red-soft); color: var(--stamp-red); }
-  .stage-violet{ background: var(--stamp-violet-soft); color: var(--stamp-violet); }
-
-  .interaction-icon{ display:inline-block; width:14px; height:14px; vertical-align:-2px; margin-right:.3rem; }
-  .interaction-icon svg{ width:100%; height:100%; }
-  .row-link{ font-size:.78rem; text-decoration:underline; white-space:nowrap; }
-  .empty-state{ text-align:center; padding:2rem 1rem; color: var(--ink-faint); font-size:.86rem; }
-
-  /* tarefas e automações */
-  .task-list{ list-style:none; margin:0; padding:0; }
-  .task-item{
-    display:flex; gap:.7rem; align-items:flex-start; padding:.85rem 1.3rem;
-    border-bottom:1px solid var(--rule); flex-wrap:wrap;
+  .stage-blue{background:var(--blue-bg);color:var(--blue)}
+  .stage-amber{background:var(--amber-bg);color:var(--amber)}
+  .stage-green{background:var(--success-bg);color:var(--success)}
+  .stage-red{background:var(--danger-bg);color:var(--danger)}
+  .stage-violet{background:var(--violet-bg);color:var(--violet)}
+  .interaction{
+    display:flex;
+    align-items:center;
+    gap:.35rem;
+    min-width:190px;
+    color:var(--muted);
   }
-  .task-item:last-child{ border-bottom:none; }
-  .task-item.overdue{ background: var(--stamp-red-soft); }
-  .task-item.done .task-title{ text-decoration: line-through; color: var(--ink-faint); }
-  .task-type-badge{
-    font-family: var(--font-mono); font-size:.65rem; text-transform:uppercase; letter-spacing:.04em;
-    padding:.2rem .4rem; border-radius:3px; white-space:nowrap; margin-top:.1rem; flex:none;
+  .interaction svg{flex:none;width:14px;height:14px}
+  .row-link{
+    display:inline-flex;
+    align-items:center;
+    min-height:30px;
+    padding:.25rem .45rem;
+    border-radius:6px;
+    color:var(--link);
+    font-size:.69rem;
+    font-weight:600;
+    text-decoration:none;
   }
-  .badge-tarefa{ background: var(--stamp-blue-soft); color: var(--stamp-blue); }
-  .badge-lembrete{ background: var(--stamp-amber-soft); color: var(--stamp-amber); }
-  .badge-automacao{ background: var(--stamp-violet-soft); color: var(--stamp-violet); }
-  .task-body{ min-width:0; flex:1 1 160px; }
-  .task-title{ margin:0; font-size:.86rem; font-weight:500; overflow-wrap:anywhere; }
-  .task-meta{ margin:.15rem 0 0; font-size:.76rem; color: var(--ink-faint); font-family: var(--font-mono); overflow-wrap:anywhere; }
-  .automation-cta{
-    display:block; width:calc(100% - 2.6rem); margin:1rem 1.3rem 1.3rem;
-    background:none; border:1px dashed var(--ink-faint); color: var(--ink-soft);
-    padding:.75rem; border-radius: var(--radius); font-size:.82rem; min-height:44px;
+  .row-link:hover{background:var(--hover-bg)}
+  .empty-state{
+    padding:2rem 1rem!important;
+    color:var(--faint);
+    text-align:center;
+    font-size:.78rem;
   }
-  .automation-cta:hover{ border-color: var(--brass); color: var(--ink); }
 
-  /* relatórios */
-  .reports-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:1.3rem; }
-  .chart-panel{ padding:1.2rem 1.3rem 1.4rem; min-width:0; }
-  .chart-panel h3{ font-size:.95rem; margin-bottom:.8rem; }
-  .chart-panel canvas{ max-height:240px; max-width:100%; }
+  /* ===== REPORTS ===== */
+  .reports-section{margin-bottom:1rem}
+  .section-heading{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:1rem;
+    margin:1.15rem 0 .7rem;
+  }
+  .section-heading h2{font-size:1.08rem}
+  .section-heading p{margin-top:.2rem;color:var(--muted);font-size:.75rem}
+  .reports-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  .chart-panel{padding-bottom:.85rem}
+  .chart-wrap{
+    position:relative;
+    height:250px;
+    padding:.7rem 1rem .4rem;
+  }
+  .chart-empty{
+    height:100%;
+    display:grid;
+    place-items:center;
+    color:var(--faint);
+    font-size:.78rem;
+    text-align:center;
+  }
 
+  /* ===== FOOTER ===== */
   footer{
-    background: var(--ledger-cover); color: rgba(245,241,228,.55);
-    text-align:center; padding:1.2rem 1rem; font-size:.78rem; font-family: var(--font-mono);
+    max-width:var(--max);
+    margin:0 auto;
+    padding:.3rem 2rem 1.6rem;
+    color:var(--faint);
+    text-align:center;
+    font:.67rem var(--font-mono);
   }
 
-  /* ===================== DIALOGS ===================== */
+  /* ===== DIALOG ===== */
   dialog{
-    border:none; border-radius: var(--radius); padding:0;
-    max-width:420px; width:92vw;
-    max-height: 88vh; overflow-y:auto;
-    box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    width:min(94vw,460px);
+    max-height:88vh;
+    padding:0;
+    overflow:auto;
+    border:0;
+    border-radius:14px;
+    background:var(--surface-2);
+    color:var(--ink);
+    box-shadow:0 24px 70px rgba(0,0,0,.26);
   }
-  dialog::backdrop{ background: rgba(14,36,32,.55); }
-  .dialog-inner{ padding: clamp(1.1rem, 4vw, 1.4rem) clamp(1.1rem, 4.5vw, 1.5rem); }
-  .dialog-inner h3{ margin-bottom:1rem; font-size: clamp(1.05rem, 4vw, 1.2rem); }
-  .dialog-inner label{ display:block; font-size:.78rem; color: var(--ink-soft); margin:.7rem 0 .25rem; }
-  .dialog-inner input, .dialog-inner select{
-    width:100%; padding:.6rem .7rem; border:1px solid var(--rule); border-radius:3px; font-size:16px;
-    font-family: var(--font-body); background: var(--paper-soft); color: var(--ink);
+  dialog::backdrop{background:var(--backdrop);backdrop-filter:blur(2px)}
+  .dialog-inner{padding:1.15rem}
+  .dialog-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:1rem;
+    margin-bottom:.8rem;
   }
-  .dialog-actions{ display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.3rem; flex-wrap:wrap; }
-  .dialog-actions button{ padding:.65rem 1rem; border-radius:3px; font-size:.84rem; border:1px solid var(--rule); background:none; min-height:44px; }
-  .dialog-actions .primary{ background: var(--ledger-cover); color: var(--paper-soft); border-color: var(--ledger-cover); }
+  .dialog-head h3{font-size:1.15rem}
+  .dialog-head p{margin-top:.2rem;color:var(--muted);font-size:.74rem}
+  .dialog-close{
+    flex:none;
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:transparent;
+    color:var(--muted);
+  }
+  .dialog-inner label{
+    display:block;
+    margin:.65rem 0 .25rem;
+    color:var(--muted);
+    font-size:.71rem;
+    font-weight:600;
+  }
+  .dialog-inner input,.dialog-inner select{
+    width:100%;
+    min-height:42px;
+    padding:.52rem .65rem;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:var(--input-bg);
+    color:var(--ink);
+    font-size:16px;
+  }
+  .dialog-inner input:focus,.dialog-inner select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--focus-ring)}
+  .dialog-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:.55rem;
+    margin-top:1rem;
+  }
+  .dialog-actions button{
+    min-height:40px;
+    padding:.5rem .8rem;
+    border:1px solid var(--line-strong);
+    border-radius:8px;
+    background:transparent;
+    font-size:.76rem;
+    font-weight:600;
+  }
+  .dialog-actions .primary{
+    border-color:var(--strong-control-bg);
+    background:var(--strong-control-bg);
+    color:var(--strong-control-text);
+  }
+  .dialog-actions .primary:hover{
+    border-color:var(--strong-control-hover);
+    background:var(--strong-control-hover);
+  }
 
-  /* ===================== RESPONSIVO ===================== */
-  @media (max-width: 980px){
-    .main-grid{ grid-template-columns: 1fr; }
-    .reports-grid{ grid-template-columns: 1fr; }
-    .metrics-row{ grid-template-columns: repeat(2, 1fr); }
+  .mobile-add{
+    display:none;
+    position:fixed;
+    right:1rem;
+    bottom:1rem;
+    z-index:60;
+    width:52px;
+    height:52px;
+    place-items:center;
+    border:0;
+    border-radius:16px;
+    background:var(--strong-control-bg);
+    color:var(--fab-text);
+    box-shadow:0 10px 25px color-mix(in srgb,var(--strong-control-bg) 30%,transparent);
+    font-size:1.35rem;
   }
 
-  @media (max-width: 720px){
-    .cover-top{ gap:.9rem; }
-    .search-form{ order:3; flex-basis:100%; max-width:none; }
-    .header-actions{ order:2; margin-left:auto; }
-    .brand{ order:1; }
-    .user-chip span:last-child{ display:none; }
-    .ledger-nav{ gap:1.1rem; justify-content:flex-start; }
+  @media (prefers-color-scheme:dark){
+    .global-search input:focus{
+      border-color:var(--accent-2);
+      box-shadow:none;
+    }
+    .filter-chip:hover,.filter-chip.is-active{border-color:var(--accent)}
+    .dialog-actions .primary{border-color:var(--accent)}
+    .mobile-add{box-shadow:0 10px 25px rgba(14,36,32,.3)}
   }
 
-  @media (max-width: 560px){
-    .metrics-row{ grid-template-columns: 1fr; }
-    section{ padding: 1.1rem 1rem; }
-    .cover{ padding: 1.1rem 1rem .5rem; }
-    .funnel-info{ font-size:.78rem; gap:.5rem; }
-    .panel-header{ padding:1rem; }
-    .table-scroll{ margin: 0; }
-    .contacts-table th, .contacts-table td{ padding:.65rem 1rem; }
-    .task-item{ padding:.75rem 1rem; }
-    .automation-cta{ width:calc(100% - 2rem); margin:1rem; }
-    .reports-grid{ gap:1rem; }
-    .chart-panel{ padding:1rem; }
-    .chart-panel canvas{ max-height:200px; }
-    .dialog-actions{ flex-direction:column-reverse; }
-    .dialog-actions button{ width:100%; }
+  @media (max-width:1050px){
+    .topbar-main{grid-template-columns:minmax(190px,auto) minmax(220px,1fr) auto}
+    .user-name{display:none}
+    .metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .cockpit-grid{grid-template-columns:1fr}
   }
-
-  @media (max-width: 400px){
-    .brand-text h1{ font-size:.95rem; }
-    .btn-quick-add{ padding:.6rem .85rem; font-size:.8rem; }
-    .funnel-shape{ height:48px; }
-    .conv-badge{ width:34px; height:34px; font-size:.68rem; }
+  @media (max-width:760px){
+    .topbar-inner{padding:.7rem 1rem .55rem}
+    .topbar-main{grid-template-columns:minmax(0,1fr) auto}
+    .global-search{grid-column:1/-1;grid-row:2}
+    .brand-copy small{display:none}
+    .section-nav{margin-top:.5rem}
+    main{padding:1rem}
+    .dashboard-head{align-items:flex-start;flex-direction:column}
+    .updated-chip{align-self:flex-start}
+    .reports-grid{grid-template-columns:1fr}
+    .contacts-toolbar{grid-template-columns:1fr}
+  }
+  @media (max-width:620px){
+    .header-actions .primary-btn{display:none}
+    .mobile-add{display:grid}
+    .metrics-grid{gap:.6rem}
+    .metric-card{padding:.85rem}
+    .funnel-stage{
+      grid-template-columns:minmax(100px,.9fr) minmax(110px,1.4fr);
+      gap:.6rem;
+    }
+    .stage-value{grid-column:1/-1;text-align:right;margin-top:-.2rem}
+    .conversion-row{grid-template-columns:minmax(100px,.9fr) minmax(110px,1.4fr);gap:.6rem}
+    .conversion-line{grid-column:2}
+    .contacts-table{min-width:0}
+    .contacts-table thead{display:none}
+    .contacts-table tbody{display:block;padding:.35rem}
+    .contacts-table tr{
+      display:grid;
+      grid-template-columns:1fr;
+      margin:.45rem;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:var(--surface-2);
+      overflow:hidden;
+    }
+    .contacts-table td{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:1rem;
+      padding:.55rem .65rem;
+      border-bottom:1px solid var(--line);
+      text-align:right;
+    }
+    .contacts-table td::before{
+      content:attr(data-label);
+      flex:none;
+      color:var(--faint);
+      font-size:.62rem;
+      font-weight:600;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .contacts-table td:last-child{border-bottom:0}
+    .contacts-table td.empty-state{display:block}
+    .contacts-table td.empty-state::before{display:none}
+    .contact-name-cell{justify-content:flex-end;min-width:0}
+    .interaction{justify-content:flex-end;min-width:0}
+    .chart-wrap{height:220px}
+  }
+  @media (max-width:430px){
+    .metrics-grid{grid-template-columns:1fr}
+    .brand-mark{width:34px;height:34px}
+    .brand-copy strong{font-size:.92rem}
+    .user-chip{display:none}
+    .funnel-stage{grid-template-columns:1fr}
+    .stage-bar-track{grid-column:1}
+    .stage-value{grid-column:1;text-align:left}
+    .conversion-row{grid-template-columns:1fr}
+    .conversion-line{grid-column:1}
+    .dialog-actions{flex-direction:column-reverse}
+    .dialog-actions button{width:100%}
   }
 </style>
 </head>
@@ -346,229 +1024,352 @@
 
 <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
 
-<header class="cover">
-  <div class="cover-top">
-    <div class="brand">
-      <span class="brand-mark" aria-hidden="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-          <path d="M4 4h16l-6 9v6l-4 2v-8L4 4z"/>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-main">
+
+      <a class="brand" href="#visao-geral" aria-label="Ir para visão geral do CRM">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M4 4h16l-6 9v6l-4 2v-8L4 4z"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>{{ empresa_nome|default('Painel Comercial') }}</strong>
+          <small>CRM · operação comercial</small>
+        </span>
+      </a>
+
+      <form class="global-search" action="{{ url_for('main.buscar') if config.get('BUSCAR_ENDPOINT', true) else '#' }}" method="get" role="search">
+        <label class="visually-hidden" for="busca-geral">Buscar contato, empresa ou negócio</label>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>
         </svg>
-      </span>
-      <div class="brand-text">
-        <h1>{{ empresa_nome|default('Painel Comercial') }}</h1>
-        <p>Gestão de relacionamento com clientes</p>
+        <input id="busca-geral" type="search" name="q" autocomplete="off" placeholder="Buscar contato, empresa ou negócio…">
+        <span class="shortcut-hint" aria-hidden="true">/</span>
+      </form>
+
+      <div class="header-actions">
+        <button type="button" class="primary-btn" data-open-dialog="modal-novo-contato">+ Novo contato</button>
+        <div class="user-chip" title="{{ usuario.nome|default('Visitante') }}">
+          <span class="user-avatar">{{ usuario.iniciais|default('VC') }}</span>
+          <span class="user-name">{{ usuario.nome|default('Visitante') }}</span>
+        </div>
       </div>
+
     </div>
 
-    <form class="search-form" action="{{ url_for('main.buscar') if config.get('BUSCAR_ENDPOINT', true) else '#' }}" method="get" role="search">
-      <label for="busca-geral" class="visually-hidden" style="position:absolute;left:-9999px;">Buscar contato, empresa ou negócio</label>
-      <input id="busca-geral" type="search" name="q" placeholder="Buscar contato, empresa ou negócio…">
-    </form>
-
-    <div class="header-actions">
-      <button class="btn-quick-add" onclick="document.getElementById('modal-novo-contato').showModal()">+ Novo contato</button>
-      <div class="user-chip">
-        <span class="avatar">{{ usuario.iniciais|default('VC') }}</span>
-        <span>{{ usuario.nome|default('Visitante') }}</span>
-      </div>
-    </div>
+    <nav class="section-nav" aria-label="Seções do painel">
+      <a href="#visao-geral">Visão geral</a>
+      <a href="#funil">Pipeline</a>
+      <a href="#tarefas">Tarefas</a>
+      <a href="#contatos">Contatos</a>
+      <a href="#relatorios">Relatórios</a>
+    </nav>
   </div>
-
-  <nav class="ledger-nav" aria-label="Seções do painel">
-    <a href="#funil">Funil de vendas</a>
-    <a href="#contatos">Contatos</a>
-    <a href="#tarefas">Tarefas &amp; automações</a>
-    <a href="#relatorios">Relatórios</a>
-  </nav>
 </header>
 
 <main id="conteudo-principal">
 
-  <!-- ===================== FUNIL DE VENDAS ===================== -->
-  <section id="funil" class="funnel-hero" aria-labelledby="funil-titulo">
-    <div class="funnel-intro">
-      <span class="eyebrow">Funil de vendas</span>
-      <h2 id="funil-titulo">Da prospecção ao pós-venda — {{ periodo_funil.criado_em|default('mês atual') }}</h2>
+  <section id="visao-geral" aria-labelledby="visao-geral-titulo">
+    <div class="dashboard-head">
+      <div>
+        <span class="eyebrow">Visão geral comercial</span>
+        <h1 id="visao-geral-titulo">O que precisa de atenção agora</h1>
+        <p>Resumo do pipeline, desempenho e pendências da operação comercial.</p>
+      </div>
+      <span class="updated-chip">Atualizado {{ data_atualizacao|default('agora') }}</span>
     </div>
 
-    <div class="funnel-stages">
-      {% for etapa in funil %}
-      <div class="funnel-row">
-        <div class="funnel-shape bg-{{ etapa.cor }}" style="width: {{ etapa.largura_pct }}%;" role="img"
-             aria-label="{{ etapa.nome }}: {{ etapa.quantidade }} negócios"></div>
-        <div class="funnel-info">
-          <span class="funnel-stage-name">{{ etapa.nome }}</span>
-          <span class="funnel-stage-count">{{ etapa.quantidade }} negócio{{ 's' if etapa.quantidade != 1 else '' }}</span>
-          <span class="funnel-stage-value">R$ {{ etapa.valor_total }}</span>
-        </div>
-      </div>
-      {% if not loop.last %}
-      <div class="funnel-divider">
-        <span class="conv-badge">{{ etapa.conversao_pct }}%</span>
-      </div>
-      {% endif %}
-      {% else %}
-      <p class="empty-state">Cadastre negócios para acompanhar aqui o avanço entre as etapas do funil.</p>
-      {% endfor %}
-    </div>
-  </section>
-
-  <!-- ===================== MÉTRICAS ===================== -->
-  <section aria-label="Métricas gerais">
-    <div class="metrics-row">
+    <div class="metrics-grid" aria-label="Métricas gerais">
       {% for m in metricas %}
-      <div class="metric-card">
+      <article class="metric-card">
         <span class="metric-label">{{ m.label }}</span>
-        <span class="metric-value">{{ m.valor }}</span>
+        <strong class="metric-value">{{ m.valor }}</strong>
         <span class="metric-delta {{ 'up' if m.delta >= 0 else 'down' }}">
+          <span aria-hidden="true">{{ '↗' if m.delta >= 0 else '↘' }}</span>
           {{ '+' if m.delta >= 0 else '' }}{{ m.delta }}% vs. mês anterior
         </span>
-      </div>
+      </article>
+      {% else %}
+      <article class="metric-card">
+        <span class="metric-label">Métricas</span>
+        <strong class="metric-value">—</strong>
+        <span class="metric-delta">Sem dados disponíveis</span>
+      </article>
       {% endfor %}
     </div>
   </section>
 
-  <!-- ===================== CONTATOS + TAREFAS ===================== -->
-  <section>
-    <div class="main-grid">
+  <div class="cockpit-grid">
 
-      <div class="panel" id="contatos" aria-labelledby="contatos-titulo">
-        <div class="panel-header">
-          <h3 id="contatos-titulo">Contatos</h3>
-          <span class="panel-meta">{{ contatos|length }} no total</span>
+    <section id="funil" class="panel" aria-labelledby="funil-titulo">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="eyebrow">Pipeline</span>
+          <h2 id="funil-titulo">Funil de vendas</h2>
+          <p class="panel-subtitle">Da prospecção ao pós-venda · {{ periodo_funil.criado_em|default('mês atual') }}</p>
         </div>
-        <div class="table-scroll">
-        <table class="contacts-table">
-          <thead>
-            <tr>
-              <th scope="col">Contato</th>
-              <th scope="col">Empresa</th>
-              <th scope="col">Etapa</th>
-              <th scope="col">Última interação</th>
-              <th scope="col"><span style="position:absolute;left:-9999px;">Ações</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for c in contatos %}
-            <tr>
-              <td><span class="avatar">{{ c.iniciais }}</span>{{ c.nome }}</td>
-              <td>{{ c.empresa }}</td>
-              <td><span class="stage-pill stage-{{ c.etapa_cor }}">{{ c.etapa }}</span></td>
-              <td>
-                <span class="interaction-icon" aria-hidden="true">
-                  {% if c.ultima_interacao.tipo == 'email' %}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg>
-                  {% elif c.ultima_interacao.tipo == 'ligacao' %}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4c1 4 2 6 4 8s4 3 8 4l2-3-5-2-1 1c-2-1-3-2-4-4l1-1-2-5z"/></svg>
-                  {% else %}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v10H9l-4 4V5z"/></svg>
-                  {% endif %}
-                </span>
-                {{ c.ultima_interacao.resumo }} · {{ c.ultima_interacao.data }}
-              </td>
-              <td><a class="row-link" href="{{ url_for('main.contato_detalhe', contato_id=c.id) }}">Histórico</a></td>
-            </tr>
-            {% else %}
-            <tr><td colspan="5" class="empty-state">Nenhum contato cadastrado ainda. Use "Novo contato" para começar.</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        </div>
+        <span class="panel-meta">{{ funil|length }} etapas</span>
       </div>
 
-      <div class="panel" id="tarefas" aria-labelledby="tarefas-titulo">
-        <div class="panel-header">
-          <h3 id="tarefas-titulo">Tarefas &amp; automações</h3>
-          <span class="panel-meta">{{ tarefas|selectattr('concluida', 'equalto', false)|list|length }} pendentes</span>
-        </div>
-        <ul class="task-list">
-          {% for t in tarefas %}
-          <li class="task-item {{ 'done' if t.concluida }} {{ 'overdue' if t.atrasada and not t.concluida }}">
-            <span class="task-type-badge badge-{{ t.tipo }}">{{ t.tipo }}</span>
-            <div class="task-body">
-              <p class="task-title">{{ t.titulo }}</p>
-              <p class="task-meta">{{ t.contato }} · vence {{ t.prazo }}</p>
+      <div class="pipeline-body">
+        <div class="funnel-list">
+          {% for etapa in funil %}
+          <div class="funnel-stage">
+            <div class="stage-label">
+              <span class="stage-name">{{ etapa.nome }}</span>
+              <span class="stage-count">{{ etapa.quantidade }} negócio{{ 's' if etapa.quantidade != 1 else '' }}</span>
             </div>
-          </li>
+
+            <div class="stage-bar-track" aria-hidden="true">
+              <div class="stage-bar bg-{{ etapa.cor }}" style="--stage-width: {{ etapa.largura_pct }}%;"></div>
+            </div>
+
+            <span class="stage-value">R$ {{ etapa.valor_total }}</span>
+          </div>
+
+          {% if not loop.last %}
+          <div class="conversion-row" aria-label="Conversão para a próxima etapa: {{ etapa.conversao_pct }}%">
+            <div class="conversion-line">
+              <span class="conversion-badge">{{ etapa.conversao_pct }}%</span>
+            </div>
+          </div>
+          {% endif %}
           {% else %}
-          <li class="empty-state">Nenhuma tarefa agendada.</li>
+          <p class="empty-state">Cadastre negócios para acompanhar o avanço entre as etapas do funil.</p>
           {% endfor %}
-        </ul>
-        <button class="automation-cta" onclick="document.getElementById('modal-automacao').showModal()">
-          + Configurar nova automação
-        </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="tarefas" class="panel" aria-labelledby="tarefas-titulo">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <span class="eyebrow">Execução</span>
+          <h2 id="tarefas-titulo">Tarefas &amp; automações</h2>
+        </div>
+        <span class="panel-meta" id="task-count">{{ tarefas|selectattr('concluida', 'equalto', false)|list|length }} pendentes</span>
       </div>
 
+      <div class="task-toolbar" aria-label="Filtrar tarefas">
+        <button type="button" class="filter-chip is-active" data-task-filter="all">Todas</button>
+        <button type="button" class="filter-chip" data-task-filter="pending">Pendentes</button>
+        <button type="button" class="filter-chip" data-task-filter="overdue">Atrasadas</button>
+        <button type="button" class="filter-chip" data-task-filter="done">Concluídas</button>
+      </div>
+
+      <ul class="task-list" id="task-list">
+        {% for t in tarefas %}
+        <li
+          class="task-item {{ 'done' if t.concluida }} {{ 'overdue' if t.atrasada and not t.concluida }}"
+          data-status="{{ 'done' if t.concluida else ('overdue' if t.atrasada else 'pending') }}"
+        >
+          <span class="task-badge badge-{{ t.tipo }}">{{ t.tipo }}</span>
+          <div>
+            <p class="task-title">{{ t.titulo }}</p>
+            <p class="task-meta">{{ t.contato }} · vence {{ t.prazo }}</p>
+          </div>
+        </li>
+        {% else %}
+        <li class="empty-state" data-empty-task>Nenhuma tarefa agendada.</li>
+        {% endfor %}
+      </ul>
+
+      <button type="button" class="automation-cta" data-open-dialog="modal-automacao">
+        + Configurar nova automação
+      </button>
+    </section>
+
+  </div>
+
+  <section id="contatos" class="panel contacts-panel" aria-labelledby="contatos-titulo">
+    <div class="panel-header">
+      <div class="panel-title-wrap">
+        <span class="eyebrow">Relacionamento</span>
+        <h2 id="contatos-titulo">Contatos</h2>
+        <p class="panel-subtitle">Encontre rapidamente quem precisa de acompanhamento.</p>
+      </div>
+      <span class="panel-meta" id="contacts-count" aria-live="polite">{{ contatos|length }} no total</span>
+    </div>
+
+    <div class="contacts-toolbar">
+      <div class="field-control">
+        <label class="visually-hidden" for="filtro-contatos">Filtrar contatos desta tabela</label>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>
+        </svg>
+        <input id="filtro-contatos" type="search" autocomplete="off" placeholder="Filtrar por nome, empresa ou interação…">
+      </div>
+
+      <label class="visually-hidden" for="filtro-etapa">Filtrar por etapa</label>
+      <select id="filtro-etapa">
+        <option value="">Todas as etapas</option>
+        {% for etapa in funil %}
+        <option value="{{ etapa.nome|lower }}">{{ etapa.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="table-scroll">
+      <table class="contacts-table">
+        <thead>
+          <tr>
+            <th scope="col">Contato</th>
+            <th scope="col">Empresa</th>
+            <th scope="col">Etapa</th>
+            <th scope="col">Última interação</th>
+            <th scope="col"><span class="visually-hidden">Ações</span></th>
+          </tr>
+        </thead>
+        <tbody id="contacts-body">
+          {% for c in contatos %}
+          <tr data-contact-row data-stage="{{ c.etapa|lower }}">
+            <td data-label="Contato">
+              <div class="contact-name-cell">
+                <span class="contact-avatar">{{ c.iniciais }}</span>
+                <span>{{ c.nome }}</span>
+              </div>
+            </td>
+            <td data-label="Empresa">{{ c.empresa }}</td>
+            <td data-label="Etapa"><span class="stage-pill stage-{{ c.etapa_cor }}">{{ c.etapa }}</span></td>
+            <td data-label="Última interação">
+              <span class="interaction">
+                {% if c.ultima_interacao.tipo == 'email' %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg>
+                {% elif c.ultima_interacao.tipo == 'ligacao' %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4c1 4 2 6 4 8s4 3 8 4l2-3-5-2-1 1c-2-1-3-2-4-4l1-1-2-5z"/></svg>
+                {% else %}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v10H9l-4 4V5z"/></svg>
+                {% endif %}
+                <span>{{ c.ultima_interacao.resumo }} · {{ c.ultima_interacao.data }}</span>
+              </span>
+            </td>
+            <td data-label="Ação">
+              <a class="row-link" href="{{ url_for('main.contato_detalhe', contato_id=c.id) }}">Ver histórico →</a>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="empty-state">Nenhum contato cadastrado ainda. Use “Novo contato” para começar.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </section>
 
-  <!-- ===================== RELATÓRIOS ===================== -->
-  <section id="relatorios" aria-labelledby="relatorios-titulo">
-    <span class="eyebrow">Relatórios e métricas</span>
-    <h2 id="relatorios-titulo" style="font-size: clamp(1.1rem, 4.5vw, 1.3rem); margin:.4rem 0 1.2rem;">Desempenho comercial</h2>
+  <section id="relatorios" class="reports-section" aria-labelledby="relatorios-titulo">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Análise</span>
+        <h2 id="relatorios-titulo">Desempenho comercial</h2>
+        <p>Tendências para apoiar decisões, sem competir com a operação do dia.</p>
+      </div>
+    </div>
+
     <div class="reports-grid">
-      <div class="panel chart-panel">
-        <h3>Conversão por etapa do funil</h3>
-        <canvas id="grafico-funil" role="img" aria-label="Gráfico de barras com a quantidade de negócios por etapa do funil"></canvas>
-      </div>
-      <div class="panel chart-panel">
-        <h3>Receita nos últimos meses</h3>
-        <canvas id="grafico-receita" role="img" aria-label="Gráfico de linha com a evolução da receita mensal"></canvas>
-      </div>
+      <article class="panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <h3>Negócios por etapa</h3>
+            <p class="panel-subtitle">Distribuição atual do pipeline</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="grafico-funil" role="img" aria-label="Gráfico de barras com a quantidade de negócios por etapa do funil"></canvas>
+          <div id="grafico-funil-vazio" class="chart-empty" hidden>Sem dados suficientes para exibir o gráfico.</div>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <div class="panel-title-wrap">
+            <h3>Receita nos últimos meses</h3>
+            <p class="panel-subtitle">Evolução mensal da receita</p>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="grafico-receita" role="img" aria-label="Gráfico de linha com a evolução da receita mensal"></canvas>
+          <div id="grafico-receita-vazio" class="chart-empty" hidden>Sem dados suficientes para exibir o gráfico.</div>
+        </div>
+      </article>
     </div>
   </section>
 
 </main>
 
 <footer>
-  {{ empresa_nome|default('Painel Comercial') }} · atualizado em {{ data_atualizacao|default('agora') }}
+  {{ empresa_nome|default('Painel Comercial') }} · CRM · atualizado em {{ data_atualizacao|default('agora') }}
 </footer>
 
-<!-- ===================== MODAL: NOVO CONTATO ===================== -->
-<dialog id="modal-novo-contato">
+<button type="button" class="mobile-add" data-open-dialog="modal-novo-contato" aria-label="Adicionar novo contato">+</button>
+
+<dialog id="modal-novo-contato" aria-labelledby="novo-contato-titulo">
   <form class="dialog-inner" method="post" action="{{ url_for('main.criar_contato') }}">
-    <h3>Novo contato</h3>
+    <div class="dialog-head">
+      <div>
+        <h3 id="novo-contato-titulo">Novo contato</h3>
+        <p>Cadastre os dados essenciais e posicione o contato no funil.</p>
+      </div>
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
+    </div>
+
     <label for="nc-nome">Nome</label>
-    <input id="nc-nome" name="nome" type="text" required>
+    <input id="nc-nome" name="nome" type="text" autocomplete="name" required>
+
     <label for="nc-empresa">Empresa</label>
-    <input id="nc-empresa" name="empresa" type="text">
+    <input id="nc-empresa" name="empresa" type="text" autocomplete="organization">
+
     <label for="nc-email">E-mail</label>
-    <input id="nc-email" name="email" type="email">
+    <input id="nc-email" name="email" type="email" autocomplete="email">
+
     <label for="nc-telefone">Telefone</label>
-    <input id="nc-telefone" name="telefone" type="tel">
+    <input id="nc-telefone" name="telefone" type="tel" autocomplete="tel">
+
     <label for="nc-etapa">Etapa inicial</label>
     <select id="nc-etapa" name="etapa">
       {% for etapa in funil %}
       <option value="{{ etapa.nome }}">{{ etapa.nome }}</option>
       {% endfor %}
     </select>
+
     <div class="dialog-actions">
-      <button type="button" onclick="document.getElementById('modal-novo-contato').close()">Cancelar</button>
+      <button type="button" data-close-dialog>Cancelar</button>
       <button type="submit" class="primary">Salvar contato</button>
     </div>
   </form>
 </dialog>
 
-<!-- ===================== MODAL: NOVA AUTOMAÇÃO ===================== -->
-<dialog id="modal-automacao">
+<dialog id="modal-automacao" aria-labelledby="nova-automacao-titulo">
   <form class="dialog-inner" method="post" action="{{ url_for('main.criar_automacao') }}">
-    <h3>Nova automação</h3>
+    <div class="dialog-head">
+      <div>
+        <h3 id="nova-automacao-titulo">Nova automação</h3>
+        <p>Defina um gatilho e a ação que deve ocorrer automaticamente.</p>
+      </div>
+      <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
+    </div>
+
     <label for="au-gatilho">Quando isto acontecer</label>
     <select id="au-gatilho" name="gatilho">
       <option value="novo_contato">Novo contato cadastrado</option>
       <option value="mudanca_etapa">Negócio muda de etapa</option>
       <option value="sem_interacao">Contato sem interação há X dias</option>
     </select>
+
     <label for="au-acao">Fazer isto</label>
     <select id="au-acao" name="acao">
       <option value="enviar_email">Enviar e-mail automático</option>
       <option value="criar_tarefa">Criar tarefa para a equipe</option>
       <option value="lembrete">Disparar lembrete</option>
     </select>
+
     <label for="au-prazo">Prazo / atraso (dias)</label>
-    <input id="au-prazo" name="prazo_dias" type="number" min="0" value="1">
+    <input id="au-prazo" name="prazo_dias" type="number" min="0" value="1" inputmode="numeric">
+
     <div class="dialog-actions">
-      <button type="button" onclick="document.getElementById('modal-automacao').close()">Cancelar</button>
+      <button type="button" data-close-dialog>Cancelar</button>
       <button type="submit" class="primary">Ativar automação</button>
     </div>
   </form>
@@ -576,59 +1377,322 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script>
-  // Dados injetados pelo backend Flask via Jinja (ver exemplo de rota fornecido junto ao template)
+(() => {
+  "use strict";
+
   const dadosFunil = {{ grafico_funil|tojson }};
   const dadosReceita = {{ grafico_receita|tojson }};
 
-  const fontePadrao = "'IBM Plex Sans', sans-serif";
+  const normalize = (value = "") =>
+    value.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-  new Chart(document.getElementById('grafico-funil'), {
-    type: 'bar',
-    data: {
-      labels: dadosFunil.labels,
-      datasets: [{
-        label: 'Negócios',
-        data: dadosFunil.valores,
-        backgroundColor: '#3C5A75',
-        borderRadius: 3,
-        maxBarThickness: 38
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { display: false } },
-        y: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { color: 'rgba(27,42,34,0.08)' } }
-      }
+  /* Dialogs */
+  document.querySelectorAll("[data-open-dialog]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const dialog = document.getElementById(button.dataset.openDialog);
+      if (dialog && typeof dialog.showModal === "function") dialog.showModal();
+    });
+  });
+
+  document.querySelectorAll("[data-close-dialog]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const dialog = button.closest("dialog");
+      if (dialog) dialog.close();
+    });
+  });
+
+  document.querySelectorAll("dialog").forEach((dialog) => {
+    dialog.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  });
+
+  /* Atalhos: / busca global | n novo contato */
+  document.addEventListener("keydown", (event) => {
+    const target = event.target;
+    const isTyping = target instanceof HTMLInputElement ||
+                     target instanceof HTMLTextAreaElement ||
+                     target instanceof HTMLSelectElement ||
+                     target?.isContentEditable;
+
+    if (!isTyping && event.key === "/") {
+      event.preventDefault();
+      document.getElementById("busca-geral")?.focus();
+    }
+
+    if (!isTyping && event.key.toLowerCase() === "n") {
+      const dialog = document.getElementById("modal-novo-contato");
+      if (dialog && !dialog.open) dialog.showModal();
     }
   });
 
-  new Chart(document.getElementById('grafico-receita'), {
-    type: 'line',
-    data: {
-      labels: dadosReceita.labels,
-      datasets: [{
-        label: 'Receita (R$)',
-        data: dadosReceita.valores,
-        borderColor: '#3F6B4F',
-        backgroundColor: 'rgba(63,107,79,0.12)',
-        fill: true,
-        tension: 0.35,
-        pointRadius: 3
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { display: false } },
-        y: { ticks: { font: { family: fontePadrao, size: 11 } }, grid: { color: 'rgba(27,42,34,0.08)' } }
+  /* Filtro local de contatos */
+  const contactSearch = document.getElementById("filtro-contatos");
+  const stageFilter = document.getElementById("filtro-etapa");
+  const contactRows = [...document.querySelectorAll("[data-contact-row]")];
+  const contactCount = document.getElementById("contacts-count");
+
+  function filterContacts(){
+    const query = normalize(contactSearch?.value);
+    const stage = normalize(stageFilter?.value);
+    let visible = 0;
+
+    contactRows.forEach((row) => {
+      const matchesText = !query || normalize(row.innerText).includes(query);
+      const matchesStage = !stage || normalize(row.dataset.stage) === stage;
+      const show = matchesText && matchesStage;
+      row.hidden = !show;
+      if (show) visible += 1;
+    });
+
+    if (contactCount) {
+      contactCount.textContent = (query || stage)
+        ? `${visible} de ${contactRows.length}`
+        : `${contactRows.length} no total`;
+    }
+  }
+
+  contactSearch?.addEventListener("input", filterContacts);
+  stageFilter?.addEventListener("change", filterContacts);
+
+  /* Filtro local de tarefas */
+  const taskButtons = [...document.querySelectorAll("[data-task-filter]")];
+  const taskItems = [...document.querySelectorAll(".task-item[data-status]")];
+  const taskCount = document.getElementById("task-count");
+
+  taskButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const filter = button.dataset.taskFilter;
+
+      taskButtons.forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("is-active", active);
+        item.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+
+      let visible = 0;
+      taskItems.forEach((item) => {
+        const show = filter === "all" || item.dataset.status === filter;
+        item.hidden = !show;
+        if (show) visible += 1;
+      });
+
+      if (taskCount) {
+        const label = filter === "all" ? "itens" :
+                      filter === "done" ? "concluídas" :
+                      filter === "overdue" ? "atrasadas" : "pendentes";
+        taskCount.textContent = `${visible} ${label}`;
+      }
+    });
+  });
+
+  /* Navegação contextual */
+  const navLinks = [...document.querySelectorAll(".section-nav a")];
+  const observedSections = navLinks
+    .map((link) => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+      if (!visible) return;
+      navLinks.forEach((link) => {
+        const active = link.getAttribute("href") === `#${visible.target.id}`;
+        if (active) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }, { rootMargin: "-25% 0px -60% 0px", threshold: [0.01, .2, .5] });
+
+    observedSections.forEach((section) => observer.observe(section));
+  }
+
+  /* Gráficos: cores ligadas aos tokens CSS e atualizadas com o tema do sistema */
+  if (typeof Chart !== "undefined") {
+    Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+
+    const money = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      maximumFractionDigits: 0
+    });
+
+    const cssColor = (name) =>
+      getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+    const funnelCanvas = document.getElementById("grafico-funil");
+    const funnelEmpty = document.getElementById("grafico-funil-vazio");
+    const revenueCanvas = document.getElementById("grafico-receita");
+    const revenueEmpty = document.getElementById("grafico-receita-vazio");
+
+    const funnelHasData = Array.isArray(dadosFunil?.valores) && dadosFunil.valores.some((v) => Number(v) > 0);
+    const revenueHasData = Array.isArray(dadosReceita?.valores) && dadosReceita.valores.some((v) => Number(v) !== 0);
+
+    let funnelChart = null;
+    let revenueChart = null;
+
+    function chartPalette(){
+      return {
+        text: cssColor("--chart-text"),
+        grid: cssColor("--chart-grid"),
+        blue: cssColor("--chart-blue"),
+        green: cssColor("--chart-green"),
+        greenFill: cssColor("--chart-green-fill"),
+        tooltipBg: cssColor("--chart-tooltip-bg"),
+        tooltipText: cssColor("--chart-tooltip-text")
+      };
+    }
+
+    function makeScales(palette){
+      return {
+        x: {
+          grid: { display: false },
+          border: { color: palette.grid },
+          ticks: { color: palette.text, font: { size: 10 } }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: palette.grid },
+          border: { display: false },
+          ticks: { color: palette.text, font: { size: 10 }, precision: 0 }
+        }
+      };
+    }
+
+    function tooltipTheme(palette){
+      return {
+        backgroundColor: palette.tooltipBg,
+        titleColor: palette.tooltipText,
+        bodyColor: palette.tooltipText,
+        borderColor: palette.grid,
+        borderWidth: 1,
+        displayColors: false
+      };
+    }
+
+    function buildCharts(){
+      const palette = chartPalette();
+      Chart.defaults.color = palette.text;
+      const scales = makeScales(palette);
+
+      if (funnelCanvas && funnelHasData) {
+        funnelChart = new Chart(funnelCanvas, {
+          type: "bar",
+          data: {
+            labels: dadosFunil.labels,
+            datasets: [{
+              label: "Negócios",
+              data: dadosFunil.valores,
+              backgroundColor: palette.blue,
+              borderRadius: 6,
+              maxBarThickness: 38
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                ...tooltipTheme(palette),
+                callbacks: {
+                  label: (context) => `${context.raw} negócio${Number(context.raw) === 1 ? "" : "s"}`
+                }
+              }
+            },
+            scales
+          }
+        });
+      } else if (funnelCanvas && funnelEmpty) {
+        funnelCanvas.hidden = true;
+        funnelEmpty.hidden = false;
+      }
+
+      if (revenueCanvas && revenueHasData) {
+        revenueChart = new Chart(revenueCanvas, {
+          type: "line",
+          data: {
+            labels: dadosReceita.labels,
+            datasets: [{
+              label: "Receita",
+              data: dadosReceita.valores,
+              borderColor: palette.green,
+              backgroundColor: palette.greenFill,
+              fill: true,
+              tension: .32,
+              pointRadius: 2.5,
+              pointHoverRadius: 5,
+              borderWidth: 2
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: "index" },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                ...tooltipTheme(palette),
+                callbacks: {
+                  label: (context) => money.format(Number(context.raw || 0))
+                }
+              }
+            },
+            scales: {
+              x: scales.x,
+              y: {
+                ...scales.y,
+                ticks: {
+                  ...scales.y.ticks,
+                  callback: (value) => money.format(Number(value))
+                }
+              }
+            }
+          }
+        });
+      } else if (revenueCanvas && revenueEmpty) {
+        revenueCanvas.hidden = true;
+        revenueEmpty.hidden = false;
       }
     }
-  });
+
+    function refreshChartTheme(){
+      const palette = chartPalette();
+      Chart.defaults.color = palette.text;
+
+      if (funnelChart) {
+        funnelChart.data.datasets[0].backgroundColor = palette.blue;
+        funnelChart.options.scales = makeScales(palette);
+        Object.assign(funnelChart.options.plugins.tooltip, tooltipTheme(palette));
+        funnelChart.update("none");
+      }
+
+      if (revenueChart) {
+        const scales = makeScales(palette);
+        revenueChart.data.datasets[0].borderColor = palette.green;
+        revenueChart.data.datasets[0].backgroundColor = palette.greenFill;
+        revenueChart.options.scales.x = scales.x;
+        revenueChart.options.scales.y.grid.color = palette.grid;
+        revenueChart.options.scales.y.ticks.color = palette.text;
+        Object.assign(revenueChart.options.plugins.tooltip, tooltipTheme(palette));
+        revenueChart.update("none");
+      }
+    }
+
+    buildCharts();
+
+    const themeQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
+    if (themeQuery) {
+      if (typeof themeQuery.addEventListener === "function") {
+        themeQuery.addEventListener("change", refreshChartTheme);
+      } else if (typeof themeQuery.addListener === "function") {
+        themeQuery.addListener(refreshChartTheme);
+      }
+    }
+  }
+})();
 </script>
 
 </body>
