@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block titulo %}Erro {{ codigo }}{% endblock %}
+
+{% block head %}
+<style>
+  :root{color-scheme:light dark;--page:#f5fbf8;--ink:#10261d;--muted:#425e52;--link:#087f69;--font-body:'Segoe UI',Arial,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--page:#0a1220;--ink:#f4f7fb;--muted:#c3cee0;--link:#7fc4ff}}
+  *{box-sizing:border-box}body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+  main{max-width:640px;margin:0 auto;padding:4rem 1rem;text-align:center}
+  .codigo{font-size:3rem;font-weight:700;color:var(--muted)}
+  h1{font-size:1.4rem;margin:.6rem 0}
+  p{color:var(--muted);font-size:.9rem;margin:0 0 1.6rem}
+  a{color:var(--link);font-weight:600;text-decoration:none}
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <div class="codigo">{{ codigo }}</div>
+  <h1>Ops, algo deu errado.</h1>
+  <p>{{ mensagem }}</p>
+  <a href="{{ url_for('main.dashboard') }}">← Voltar ao painel</a>
+
+{% endblock %}

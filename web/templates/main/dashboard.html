@@ -1,1075 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#f5fbf8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0a1220" media="(prefers-color-scheme: dark)">
-<title>{{ titulo_pagina|default('Painel Comercial') }} · CRM</title>
+{% extends "base.html" %}
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="fivi-icon" href="static/img/favi-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% block titulo %}Painel Comercial{% endblock %}
 
-<style>
-  :root{
-    color-scheme:light dark;
+{% block header_acoes %}
+<button type="button" class="primary-btn" data-open-dialog="modal-novo-contato">+ Novo contato</button>
+{% endblock %}
 
-    /* Base: tema claro */
-    --cover:#0e2420;
-    --cover-2:#163530;
-    --page:#f5fbf8;
-    --surface:#f9fdfb;
-    --surface-2:#ffffff;
-    --surface-raised:#ffffff;
-    --subtle-bg:#eef8f3;
-    --hover-bg:#e2f4eb;
-    --track-bg:#dcebe4;
-
-    --ink:#10261d;
-    --muted:#425e52;
-    --faint:#5f746a;
-    --link:#087f69;
-    --line:rgba(16,38,29,.12);
-    --line-strong:rgba(16,38,29,.28);
-
-    --accent:#e6b400;
-    --accent-2:#ffd24a;
-    --accent-soft:#fff7cf;
-    --accent-text:#6d5200;
-    --accent-border:rgba(230,180,0,.58);
-    --accent-contrast:#10261d;
-
-    --danger:#b52f37;
-    --danger-bg:#ffe6e7;
-    --success:#116b3d;
-    --success-bg:#dcf8e9;
-    --blue:#1d4ed8;
-    --blue-bg:#e4efff;
-    --amber:#9a4d00;
-    --amber-bg:#fff0d5;
-    --violet:#7b3fc5;
-    --violet-bg:#f0e5ff;
-
-    --header-bg:rgba(255,255,255,.96);
-    --header-text:#10261d;
-    --header-muted:#4c665a;
-    --header-line:rgba(16,38,29,.10);
-    --header-control-bg:#ffffff;
-    --header-control-border:rgba(16,38,29,.20);
-    --header-control-text:#10261d;
-    --header-control-placeholder:#63786d;
-    --header-nav-hover:#e6f7ef;
-    --header-avatar-bg:#fff0ae;
-    --header-mark-bg:#e8f8f1;
-
-    --input-bg:#ffffff;
-    --focus-ring:#087a63;
-
-    /* Controles de destaque no tema claro */
-    --strong-control-bg:#087a63;
-    --strong-control-hover:#066451;
-    --strong-control-text:#ffffff;
-    --fab-text:#ffffff;
-
-    --backdrop:rgba(10,23,19,.54);
-
-    --chart-text:#3f5e51;
-    --chart-grid:rgba(16,38,29,.10);
-    --chart-blue:#2563eb;
-    --chart-green:#16a34a;
-    --chart-green-fill:rgba(22,163,74,.14);
-    --chart-tooltip-bg:#10261d;
-    --chart-tooltip-text:#ffffff;
-
-    --radius-sm:7px;
-    --radius:12px;
-    --radius-lg:16px;
-    --shadow:0 1px 2px rgba(15,77,58,.05),0 10px 30px rgba(24,112,82,.08);
-    --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
-    --font-body:'IBM Plex Sans','Segoe UI',Arial,sans-serif;
-    --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
-    --max:1480px;
-  }
-
-  @media (prefers-color-scheme:dark){
-    :root{
-      --page:#0a1220;
-      --surface:#0f1b2d;
-      --surface-2:#132238;
-      --surface-raised:#182a44;
-      --subtle-bg:#101d30;
-      --hover-bg:#1d3150;
-      --track-bg:#243a5a;
-
-      --ink:#f4f7fb;
-      --muted:#c3cee0;
-      --faint:#a9b8ce;
-      --link:#7fc4ff;
-      --line:rgba(214,228,255,.14);
-      --line-strong:rgba(214,228,255,.26);
-
-      --accent:#e2b659;
-      --accent-2:#f0cb72;
-      --accent-soft:#332d19;
-      --accent-text:#f0cb72;
-      --accent-border:rgba(240,203,114,.46);
-      --accent-contrast:#101812;
-
-      --danger:#ee9a8b;
-      --danger-bg:#39231f;
-      --success:#8fc09f;
-      --success-bg:#1f3327;
-      --blue:#95b9da;
-      --blue-bg:#20303d;
-      --amber:#e8bd79;
-      --amber-bg:#382d1d;
-      --violet:#caa9d1;
-      --violet-bg:#33273a;
-
-      --header-bg:rgba(8,18,35,.97);
-      --header-text:#f5f8ff;
-      --header-muted:#bdc9dd;
-      --header-line:rgba(126,184,255,.22);
-      --header-control-bg:rgba(112,166,255,.09);
-      --header-control-border:rgba(164,199,255,.24);
-      --header-control-text:#f7faff;
-      --header-control-placeholder:#aebbd0;
-      --header-nav-hover:rgba(96,165,250,.13);
-      --header-avatar-bg:#1d3150;
-      --header-mark-bg:#142844;
-
-      --input-bg:#182a44;
-      --focus-ring:rgba(96,165,250,.78);
-
-      --strong-control-bg:#1d4ed8;
-      --strong-control-hover:#2563eb;
-      --strong-control-text:#ffffff;
-      --fab-text:#ffffff;
-
-      --backdrop:rgba(0,0,0,.66);
-
-      --chart-text:#c3cee0;
-      --chart-grid:rgba(214,228,255,.12);
-      --chart-blue:#6fb6ff;
-      --chart-green:#8fc09f;
-      --chart-green-fill:rgba(143,192,159,.13);
-      --chart-tooltip-bg:#edf5ff;
-      --chart-tooltip-text:#0b1526;
-
-      --shadow:0 1px 2px rgba(0,0,0,.26),0 12px 32px rgba(0,0,0,.22);
-    }
-  }
-
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-  body{
-    margin:0;
-    min-width:320px;
-    background:var(--page);
-    color:var(--ink);
-    font-family:var(--font-body);
-    -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3,p{margin:0}
-  h1,h2,h3{font-family:var(--font-display)}
-  a{color:inherit}
-  button,input,select{font:inherit}
-  button{cursor:pointer}
-  svg{display:block}
-  [hidden]{display:none!important}
-
-  .visually-hidden{
-    position:absolute!important;
-    width:1px!important;
-    height:1px!important;
-    padding:0!important;
-    margin:-1px!important;
-    overflow:hidden!important;
-    clip:rect(0,0,0,0)!important;
-    white-space:nowrap!important;
-    border:0!important;
-  }
-  .skip-link{
-    position:fixed;
-    left:1rem;
-    top:-4rem;
-    z-index:200;
-    background:var(--accent-2);
-    color:var(--accent-contrast);
-    padding:.7rem 1rem;
-    border-radius:8px;
-    font-weight:600;
-    transition:top .15s ease;
-  }
-  .skip-link:focus{top:1rem}
-  :focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
-
-  body,.topbar,.panel,.metric-card,.contacts-toolbar,.contacts-table th,
-  .contacts-table tr,.field-control input,.contacts-toolbar select,dialog,
-  .dialog-inner input,.dialog-inner select,.automation-cta,.updated-chip{
-    transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease;
-  }
-
-  @media (forced-colors:active){
-    *{forced-color-adjust:auto}
-    .metric-card::after{display:none}
-    .stage-bar{outline:1px solid CanvasText}
-  }
-  @media (prefers-reduced-motion:reduce){
-    *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
-  }
-
-  /* ===== HEADER ===== */
-  .topbar{
-    position:sticky;
-    top:0;
-    z-index:80;
-    color:var(--header-text);
-    background:var(--header-bg);
-    border-bottom:1px solid var(--header-line);
-    backdrop-filter:blur(12px);
-  }
-  .topbar-inner{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:.85rem clamp(1rem,3vw,2rem) .65rem;
-  }
-  .topbar-main{
-    display:grid;
-    grid-template-columns:minmax(220px,auto) minmax(240px,520px) auto;
-    align-items:center;
-    gap:1rem;
-  }
-  .brand{
-    min-width:0;
-    display:flex;
-    align-items:center;
-    gap:.8rem;
-    text-decoration:none;
-  }
-  .brand-mark{
-    flex:none;
-    width:38px;
-    height:38px;
-    display:grid;
-    place-items:center;
-    border:1px solid var(--accent-border);
-    border-radius:11px;
-    color:var(--accent-2);
-    background:var(--header-mark-bg);
-  }
-  .brand-copy{min-width:0}
-  .brand-copy strong{
-    display:block;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    font-family:var(--font-display);
-    font-size:1.02rem;
-    font-weight:600;
-  }
-  .brand-copy small{
-    display:block;
-    margin-top:.06rem;
-    color:var(--header-muted);
-    font-size:.68rem;
-    letter-spacing:.07em;
-    text-transform:uppercase;
-  }
-
-  .global-search{position:relative;min-width:0}
-  .global-search svg{
-    position:absolute;
-    left:.8rem;
-    top:50%;
-    transform:translateY(-50%);
-    width:17px;
-    height:17px;
-    color:var(--header-control-placeholder);
-    pointer-events:none;
-  }
-  .global-search input{
-    width:100%;
-    height:42px;
-    padding:.55rem 4rem .55rem 2.35rem;
-    border:1px solid var(--header-control-border);
-    border-radius:10px;
-    background:var(--header-control-bg);
-    color:var(--header-control-text);
-    outline:none;
-  }
-  .global-search input::placeholder{color:var(--header-control-placeholder)}
-  .global-search input:focus{
-    border-color:var(--focus-ring);
-    background:var(--surface-raised);
-    box-shadow:0 0 0 3px color-mix(in srgb,var(--focus-ring) 24%,transparent);
-  }
-  .shortcut-hint{
-    position:absolute;
-    right:.65rem;
-    top:50%;
-    transform:translateY(-50%);
-    padding:.12rem .4rem;
-    border:1px solid var(--header-control-border);
-    border-radius:5px;
-    color:var(--header-muted);
-    font:500 .68rem var(--font-mono);
-  }
-
-  .header-actions{
-    display:flex;
-    justify-content:flex-end;
-    align-items:center;
-    gap:.6rem;
-  }
-  .primary-btn,.ghost-btn,.icon-btn{
-    border-radius:9px;
-    min-height:40px;
-    font-weight:600;
-  }
-  .primary-btn{
-    border:1px solid var(--accent);
-    background:var(--accent);
-    color:var(--accent-contrast);
-    padding:.55rem .9rem;
-  }
-  .primary-btn:hover{background:var(--accent-2);border-color:var(--accent-2)}
-  .user-chip{
-    display:flex;
-    align-items:center;
-    gap:.5rem;
-    max-width:190px;
-    color:var(--header-text);
-    font-size:.8rem;
-  }
-  .user-avatar{
-    flex:none;
-    width:32px;
-    height:32px;
-    display:grid;
-    place-items:center;
-    border-radius:9px;
-    background:var(--header-avatar-bg);
-    color:var(--accent-text);
-    font:600 .72rem var(--font-mono);
-  }
-  .user-name{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-
-  .section-nav{
-    display:flex;
-    gap:.35rem;
-    margin-top:.7rem;
-    overflow:auto;
-    scrollbar-width:none;
-  }
-  .section-nav::-webkit-scrollbar{display:none}
-  .section-nav a{
-    flex:none;
-    padding:.38rem .62rem;
-    border-radius:7px;
-    color:var(--header-muted);
-    text-decoration:none;
-    font-size:.74rem;
-    font-weight:500;
-  }
-  .section-nav a:hover,
-  .section-nav a[aria-current="location"]{
-    background:var(--header-nav-hover);
-    color:var(--accent-text);
-  }
-
-  /* ===== LAYOUT ===== */
-  main{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:clamp(1rem,3vw,2rem);
-  }
-  section{scroll-margin-top:120px}
-  .dashboard-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    gap:1.2rem;
-    margin:.25rem 0 1.2rem;
-  }
-  .eyebrow{
-    display:block;
-    margin-bottom:.35rem;
-    color:var(--faint);
-    font:500 .69rem var(--font-mono);
-    letter-spacing:.11em;
-    text-transform:uppercase;
-  }
-  .dashboard-head h1{
-    font-size:clamp(1.45rem,3vw,2.15rem);
-    line-height:1.1;
-  }
-  .dashboard-head p{
-    margin-top:.4rem;
-    max-width:720px;
-    color:var(--muted);
-    font-size:.88rem;
-  }
-  .updated-chip{
-    flex:none;
-    color:var(--muted);
-    font:.72rem var(--font-mono);
-    background:var(--subtle-bg);
-    border:1px solid var(--line);
-    border-radius:999px;
-    padding:.45rem .7rem;
-  }
-
-  /* ===== KPI ===== */
-  .metrics-grid{
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:.8rem;
-    margin-bottom:1rem;
-  }
-  .metric-card{
-    position:relative;
-    overflow:hidden;
-    min-width:0;
-    padding:1rem 1.05rem;
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-  }
-  .metric-card::after{
-    content:"";
-    position:absolute;
-    inset:auto 0 0;
-    height:3px;
-    background:linear-gradient(90deg,var(--accent),var(--success),transparent);
-    opacity:.78;
-  }
-  @media (prefers-color-scheme:dark){
-    .metric-card::after{
-      background:linear-gradient(90deg,var(--accent),transparent);
-      opacity:.55;
-    }
-  }
-  .metric-label{
-    display:block;
-    color:var(--muted);
-    font-size:.73rem;
-    font-weight:500;
-  }
-  .metric-value{
-    display:block;
-    margin:.2rem 0 .18rem;
-    overflow-wrap:anywhere;
-    font-family:var(--font-display);
-    font-size:clamp(1.35rem,3vw,1.8rem);
-    line-height:1.15;
-  }
-  .metric-delta{
-    display:flex;
-    align-items:center;
-    gap:.25rem;
-    color:var(--muted);
-    font:.69rem var(--font-mono);
-  }
-  .metric-delta.up{color:var(--success)}
-  .metric-delta.down{color:var(--danger)}
-
-  /* ===== PANELS ===== */
-  .panel{
-    min-width:0;
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow);
-  }
-  .panel-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:1rem;
-    padding:1rem 1.1rem;
-    border-bottom:1px solid var(--line);
-  }
-  .panel-title-wrap{min-width:0}
-  .panel-header h2,.panel-header h3{
-    font-size:1.02rem;
-    line-height:1.2;
-  }
-  .panel-subtitle{
-    margin-top:.16rem;
-    color:var(--muted);
-    font-size:.74rem;
-  }
-  .panel-meta{
-    flex:none;
-    color:var(--faint);
-    font:.7rem var(--font-mono);
-  }
-
-  /* ===== COCKPIT ===== */
-  .cockpit-grid{
-    display:grid;
-    grid-template-columns:minmax(0,1.6fr) minmax(310px,.8fr);
-    gap:1rem;
-    margin-bottom:1rem;
-  }
-
-  /* Pipeline */
-  .pipeline-body{padding:1rem 1.1rem 1.1rem}
-  .funnel-list{
-    display:flex;
-    flex-direction:column;
-    gap:.45rem;
-  }
-  .funnel-stage{
-    display:grid;
-    grid-template-columns:minmax(130px,.85fr) minmax(180px,1.7fr) auto;
-    align-items:center;
-    gap:.9rem;
-    min-width:0;
-  }
-  .stage-label{min-width:0}
-  .stage-name{
-    display:block;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    font-size:.82rem;
-    font-weight:600;
-  }
-  .stage-count{
-    display:block;
-    margin-top:.05rem;
-    color:var(--faint);
-    font:.67rem var(--font-mono);
-  }
-  .stage-bar-track{
-    height:28px;
-    overflow:hidden;
-    border-radius:8px;
-    background:var(--track-bg);
-  }
-  .stage-bar{
-    width:var(--stage-width);
-    min-width:14px;
-    height:100%;
-    border-radius:8px;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
-  }
-  .stage-value{
-    min-width:100px;
-    text-align:right;
-    color:var(--muted);
-    font:.7rem var(--font-mono);
-    white-space:nowrap;
-  }
-  .conversion-row{
-    display:grid;
-    grid-template-columns:minmax(130px,.85fr) minmax(180px,1.7fr) auto;
-    gap:.9rem;
-    align-items:center;
-    min-height:22px;
-  }
-  .conversion-line{
-    display:flex;
-    align-items:center;
-    gap:.45rem;
-    grid-column:2;
-    color:var(--faint);
-    font:.64rem var(--font-mono);
-  }
-  .conversion-line::before,
-  .conversion-line::after{
-    content:"";
-    height:1px;
-    flex:1;
-    background:var(--line);
-  }
-  .conversion-badge{
-    flex:none;
-    padding:.16rem .38rem;
-    border:1px solid var(--accent-border);
-    border-radius:999px;
-    color:var(--accent-text);
-    background:var(--accent-soft);
-  }
-  .bg-blue{background:var(--blue)}
-  .bg-amber{background:var(--amber)}
-  .bg-green{background:var(--success)}
-  .bg-red{background:var(--danger)}
-  .bg-violet{background:var(--violet)}
-
-  /* Tasks */
-  .task-toolbar{
-    display:flex;
-    gap:.35rem;
-    flex-wrap:wrap;
-    padding:.75rem 1rem .2rem;
-  }
-  .filter-chip{
-    min-height:32px;
-    padding:.32rem .55rem;
-    border:1px solid var(--line);
-    border-radius:999px;
-    background:transparent;
-    color:var(--muted);
-    font-size:.7rem;
-    font-weight:600;
-  }
-  .filter-chip:hover,.filter-chip.is-active{
-    background:var(--strong-control-bg);
-    border-color:var(--strong-control-bg);
-    color:var(--strong-control-text);
-  }
-  .filter-chip.is-active{box-shadow:0 3px 10px color-mix(in srgb,var(--strong-control-bg) 22%,transparent)}
-  .task-list{list-style:none;margin:0;padding:.35rem 0 0}
-  .task-item{
-    display:grid;
-    grid-template-columns:auto minmax(0,1fr);
-    gap:.65rem;
-    align-items:start;
-    padding:.75rem 1rem;
-    border-bottom:1px solid var(--line);
-  }
-  .task-item:last-child{border-bottom:0}
-  .task-item.overdue:not(.done){background:linear-gradient(90deg,var(--danger-bg),transparent 78%)}
-  .task-item.done{opacity:1}
-  .task-item.done .task-title{text-decoration:line-through;color:var(--muted)}
-  .task-item.done .task-meta{color:var(--faint)}
-  .task-badge{
-    margin-top:.05rem;
-    padding:.2rem .38rem;
-    border-radius:5px;
-    font:500 .6rem var(--font-mono);
-    text-transform:uppercase;
-    letter-spacing:.04em;
-  }
-  .badge-tarefa{background:var(--blue-bg);color:var(--blue)}
-  .badge-lembrete{background:var(--amber-bg);color:var(--amber)}
-  .badge-automacao{background:var(--violet-bg);color:var(--violet)}
-  .task-title{font-size:.8rem;font-weight:600;line-height:1.32;overflow-wrap:anywhere}
-  .task-meta{margin-top:.16rem;color:var(--faint);font:.65rem var(--font-mono);overflow-wrap:anywhere}
-  .automation-cta{
-    width:calc(100% - 2rem);
-    min-height:40px;
-    margin:.85rem 1rem 1rem;
-    border:1px dashed var(--line-strong);
-    border-radius:9px;
-    background:var(--subtle-bg);
-    color:var(--muted);
-    font-size:.75rem;
-    font-weight:600;
-  }
-  .automation-cta:hover{border-color:var(--accent);color:var(--ink)}
-
-  /* ===== CONTACTS ===== */
-  .contacts-panel{margin-bottom:1rem}
-  .contacts-toolbar{
-    display:grid;
-    grid-template-columns:minmax(180px,1fr) minmax(155px,220px);
-    gap:.6rem;
-    padding:.75rem 1rem;
-    border-bottom:1px solid var(--line);
-    background:var(--subtle-bg);
-  }
-  .field-control{
-    position:relative;
-    min-width:0;
-  }
-  .field-control svg{
-    position:absolute;
-    left:.72rem;
-    top:50%;
-    transform:translateY(-50%);
-    width:15px;
-    height:15px;
-    color:var(--faint);
-    pointer-events:none;
-  }
-  .field-control input,
-  .contacts-toolbar select{
-    width:100%;
-    height:38px;
-    border:1px solid var(--line-strong);
-    border-radius:8px;
-    background:var(--surface-2);
-    color:var(--ink);
-    font-size:.76rem;
-  }
-  .field-control input{padding:.45rem .7rem .45rem 2rem}
-  .contacts-toolbar select{padding:.45rem .7rem}
-  .field-control input:focus,.contacts-toolbar select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--focus-ring)}
-
-  .table-scroll{overflow-x:auto}
-  .contacts-table{
-    width:100%;
-    border-collapse:collapse;
-    font-size:.78rem;
-  }
-  .contacts-table th{
-    position:sticky;
-    top:0;
-    z-index:2;
-    padding:.62rem 1rem;
-    border-bottom:1px solid var(--line);
-    background:var(--surface-2);
-    color:var(--faint);
-    text-align:left;
-    font-size:.64rem;
-    letter-spacing:.05em;
-    text-transform:uppercase;
-    white-space:nowrap;
-  }
-  .contacts-table td{
-    padding:.68rem 1rem;
-    border-bottom:1px solid var(--line);
-    vertical-align:middle;
-  }
-  .contacts-table tbody tr:hover{background:var(--hover-bg)}
-  .contacts-table tbody tr:last-child td{border-bottom:0}
-  .contact-name-cell{
-    display:flex;
-    align-items:center;
-    gap:.5rem;
-    min-width:160px;
-    font-weight:600;
-  }
-  .contact-avatar{
-    flex:none;
-    width:28px;
-    height:28px;
-    display:grid;
-    place-items:center;
-    border-radius:8px;
-    background:var(--blue-bg);
-    color:var(--blue);
-    font:600 .64rem var(--font-mono);
-  }
-  .stage-pill{
-    display:inline-flex;
-    align-items:center;
-    padding:.2rem .5rem;
-    border-radius:999px;
-    font:500 .63rem var(--font-mono);
-    white-space:nowrap;
-  }
-  .stage-blue{background:var(--blue-bg);color:var(--blue)}
-  .stage-amber{background:var(--amber-bg);color:var(--amber)}
-  .stage-green{background:var(--success-bg);color:var(--success)}
-  .stage-red{background:var(--danger-bg);color:var(--danger)}
-  .stage-violet{background:var(--violet-bg);color:var(--violet)}
-  .interaction{
-    display:flex;
-    align-items:center;
-    gap:.35rem;
-    min-width:190px;
-    color:var(--muted);
-  }
-  .interaction svg{flex:none;width:14px;height:14px}
-  .row-link{
-    display:inline-flex;
-    align-items:center;
-    min-height:30px;
-    padding:.25rem .45rem;
-    border-radius:6px;
-    color:var(--link);
-    font-size:.69rem;
-    font-weight:600;
-    text-decoration:none;
-  }
-  .row-link:hover{background:var(--hover-bg)}
-  .empty-state{
-    padding:2rem 1rem!important;
-    color:var(--faint);
-    text-align:center;
-    font-size:.78rem;
-  }
-
-  /* ===== REPORTS ===== */
-  .reports-section{margin-bottom:1rem}
-  .section-heading{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    gap:1rem;
-    margin:1.15rem 0 .7rem;
-  }
-  .section-heading h2{font-size:1.08rem}
-  .section-heading p{margin-top:.2rem;color:var(--muted);font-size:.75rem}
-  .reports-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:1rem;
-  }
-  .chart-panel{padding-bottom:.85rem}
-  .chart-wrap{
-    position:relative;
-    height:250px;
-    padding:.7rem 1rem .4rem;
-  }
-  .chart-empty{
-    height:100%;
-    display:grid;
-    place-items:center;
-    color:var(--faint);
-    font-size:.78rem;
-    text-align:center;
-  }
-
-  /* ===== FOOTER ===== */
-  footer{
-    max-width:var(--max);
-    margin:0 auto;
-    padding:.3rem 2rem 1.6rem;
-    color:var(--faint);
-    text-align:center;
-    font:.67rem var(--font-mono);
-  }
-
-  /* ===== DIALOG ===== */
-  dialog{
-    width:min(94vw,460px);
-    max-height:88vh;
-    padding:0;
-    overflow:auto;
-    border:0;
-    border-radius:14px;
-    background:var(--surface-2);
-    color:var(--ink);
-    box-shadow:0 24px 70px rgba(0,0,0,.26);
-  }
-  dialog::backdrop{background:var(--backdrop);backdrop-filter:blur(2px)}
-  .dialog-inner{padding:1.15rem}
-  .dialog-head{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:1rem;
-    margin-bottom:.8rem;
-  }
-  .dialog-head h3{font-size:1.15rem}
-  .dialog-head p{margin-top:.2rem;color:var(--muted);font-size:.74rem}
-  .dialog-close{
-    flex:none;
-    width:34px;
-    height:34px;
-    display:grid;
-    place-items:center;
-    border:1px solid var(--line);
-    border-radius:8px;
-    background:transparent;
-    color:var(--muted);
-  }
-  .dialog-inner label{
-    display:block;
-    margin:.65rem 0 .25rem;
-    color:var(--muted);
-    font-size:.71rem;
-    font-weight:600;
-  }
-  .dialog-inner input,.dialog-inner select{
-    width:100%;
-    min-height:42px;
-    padding:.52rem .65rem;
-    border:1px solid var(--line-strong);
-    border-radius:8px;
-    background:var(--input-bg);
-    color:var(--ink);
-    font-size:16px;
-  }
-  .dialog-inner input:focus,.dialog-inner select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--focus-ring)}
-  .dialog-actions{
-    display:flex;
-    justify-content:flex-end;
-    gap:.55rem;
-    margin-top:1rem;
-  }
-  .dialog-actions button{
-    min-height:40px;
-    padding:.5rem .8rem;
-    border:1px solid var(--line-strong);
-    border-radius:8px;
-    background:transparent;
-    font-size:.76rem;
-    font-weight:600;
-  }
-  .dialog-actions .primary{
-    border-color:var(--strong-control-bg);
-    background:var(--strong-control-bg);
-    color:var(--strong-control-text);
-  }
-  .dialog-actions .primary:hover{
-    border-color:var(--strong-control-hover);
-    background:var(--strong-control-hover);
-  }
-
-  .mobile-add{
-    display:none;
-    position:fixed;
-    right:1rem;
-    bottom:1rem;
-    z-index:60;
-    width:52px;
-    height:52px;
-    place-items:center;
-    border:0;
-    border-radius:16px;
-    background:var(--strong-control-bg);
-    color:var(--fab-text);
-    box-shadow:0 10px 25px color-mix(in srgb,var(--strong-control-bg) 30%,transparent);
-    font-size:1.35rem;
-  }
-
-  @media (prefers-color-scheme:dark){
-    .global-search input:focus{
-      border-color:var(--accent-2);
-      box-shadow:none;
-    }
-    .filter-chip:hover,.filter-chip.is-active{border-color:var(--accent)}
-    .dialog-actions .primary{border-color:var(--accent)}
-    .mobile-add{box-shadow:0 10px 25px rgba(14,36,32,.3)}
-  }
-
-  @media (max-width:1050px){
-    .topbar-main{grid-template-columns:minmax(190px,auto) minmax(220px,1fr) auto}
-    .user-name{display:none}
-    .metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .cockpit-grid{grid-template-columns:1fr}
-  }
-  @media (max-width:760px){
-    .topbar-inner{padding:.7rem 1rem .55rem}
-    .topbar-main{grid-template-columns:minmax(0,1fr) auto}
-    .global-search{grid-column:1/-1;grid-row:2}
-    .brand-copy small{display:none}
-    .section-nav{margin-top:.5rem}
-    main{padding:1rem}
-    .dashboard-head{align-items:flex-start;flex-direction:column}
-    .updated-chip{align-self:flex-start}
-    .reports-grid{grid-template-columns:1fr}
-    .contacts-toolbar{grid-template-columns:1fr}
-  }
-  @media (max-width:620px){
-    .header-actions .primary-btn{display:none}
-    .mobile-add{display:grid}
-    .metrics-grid{gap:.6rem}
-    .metric-card{padding:.85rem}
-    .funnel-stage{
-      grid-template-columns:minmax(100px,.9fr) minmax(110px,1.4fr);
-      gap:.6rem;
-    }
-    .stage-value{grid-column:1/-1;text-align:right;margin-top:-.2rem}
-    .conversion-row{grid-template-columns:minmax(100px,.9fr) minmax(110px,1.4fr);gap:.6rem}
-    .conversion-line{grid-column:2}
-    .contacts-table{min-width:0}
-    .contacts-table thead{display:none}
-    .contacts-table tbody{display:block;padding:.35rem}
-    .contacts-table tr{
-      display:grid;
-      grid-template-columns:1fr;
-      margin:.45rem;
-      border:1px solid var(--line);
-      border-radius:10px;
-      background:var(--surface-2);
-      overflow:hidden;
-    }
-    .contacts-table td{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:1rem;
-      padding:.55rem .65rem;
-      border-bottom:1px solid var(--line);
-      text-align:right;
-    }
-    .contacts-table td::before{
-      content:attr(data-label);
-      flex:none;
-      color:var(--faint);
-      font-size:.62rem;
-      font-weight:600;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-    }
-    .contacts-table td:last-child{border-bottom:0}
-    .contacts-table td.empty-state{display:block}
-    .contacts-table td.empty-state::before{display:none}
-    .contact-name-cell{justify-content:flex-end;min-width:0}
-    .interaction{justify-content:flex-end;min-width:0}
-    .chart-wrap{height:220px}
-  }
-  @media (max-width:430px){
-    .metrics-grid{grid-template-columns:1fr}
-    .brand-mark{width:34px;height:34px}
-    .brand-copy strong{font-size:.92rem}
-    .user-chip{display:none}
-    .funnel-stage{grid-template-columns:1fr}
-    .stage-bar-track{grid-column:1}
-    .stage-value{grid-column:1;text-align:left}
-    .conversion-row{grid-template-columns:1fr}
-    .conversion-line{grid-column:1}
-    .dialog-actions{flex-direction:column-reverse}
-    .dialog-actions button{width:100%}
-  }
-</style>
-</head>
-<body>
-
-<a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
-
-<header class="topbar">
-  <div class="topbar-inner">
-    <div class="topbar-main">
-
-      <a class="brand" href="#visao-geral" aria-label="Ir para visão geral do CRM">
-        <span class="brand-mark" aria-hidden="true">
-          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-            <path d="M4 4h16l-6 9v6l-4 2v-8L4 4z"/>
-          </svg>
-        </span>
-        <span class="brand-copy">
-          <strong>{{ empresa_nome|default('Painel Comercial') }}</strong>
-          <small>CRM · operação comercial</small>
-        </span>
-      </a>
-
-      <form class="global-search" action="{{ url_for('main.buscar') if config.get('BUSCAR_ENDPOINT', true) else '#' }}" method="get" role="search">
-        <label class="visually-hidden" for="busca-geral">Buscar contato, empresa ou negócio</label>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-          <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>
-        </svg>
-        <input id="busca-geral" type="search" name="q" autocomplete="off" placeholder="Buscar contato, empresa ou negócio…">
-        <span class="shortcut-hint" aria-hidden="true">/</span>
-      </form>
-
-      <div class="header-actions">
-        <button type="button" class="primary-btn" data-open-dialog="modal-novo-contato">+ Novo contato</button>
-        <div class="user-chip" title="{{ usuario.nome|default('Visitante') }}">
-          <span class="user-avatar">{{ usuario.iniciais|default('VC') }}</span>
-          <span class="user-name">{{ usuario.nome|default('Visitante') }}</span>
-        </div>
-      </div>
-
-    </div>
-
-    <nav class="section-nav" aria-label="Seções do painel">
-      <a href="#visao-geral">Visão geral</a>
-      <a href="#funil">Pipeline</a>
-      <a href="#tarefas">Tarefas</a>
-      <a href="#contatos">Contatos</a>
-      <a href="#relatorios">Relatórios</a>
-    </nav>
-  </div>
-</header>
-
-<main id="conteudo-principal">
+{% block content %}
 
   <section id="visao-geral" aria-labelledby="visao-geral-titulo">
     <div class="dashboard-head">
@@ -1078,7 +15,7 @@
         <h1 id="visao-geral-titulo">O que precisa de atenção agora</h1>
         <p>Resumo do pipeline, desempenho e pendências da operação comercial.</p>
       </div>
-      <span class="updated-chip">Atualizado {{ data_atualizacao|default('agora') }}</span>
+      <span class="updated-chip">Atualizado {{ data_atualizacao }}</span>
     </div>
 
     <div class="metrics-grid" aria-label="Métricas gerais">
@@ -1108,7 +45,7 @@
         <div class="panel-title-wrap">
           <span class="eyebrow">Pipeline</span>
           <h2 id="funil-titulo">Funil de vendas</h2>
-          <p class="panel-subtitle">Da prospecção ao pós-venda · {{ periodo_funil.criado_em|default('mês atual') }}</p>
+          <p class="panel-subtitle">Da prospecção ao pós-venda · mês atual</p>
         </div>
         <span class="panel-meta">{{ funil|length }} etapas</span>
       </div>
@@ -1150,6 +87,7 @@
           <h2 id="tarefas-titulo">Tarefas &amp; automações</h2>
         </div>
         <span class="panel-meta" id="task-count">{{ tarefas|selectattr('concluida', 'equalto', false)|list|length }} pendentes</span>
+        <button type="button" class="primary-btn" data-open-dialog="modal-nova-tarefa" style="flex:none;min-height:32px;padding:.3rem .65rem;font-size:.72rem">+ Nova tarefa</button>
       </div>
 
       <div class="task-toolbar" aria-label="Filtrar tarefas">
@@ -1168,7 +106,7 @@
           <span class="task-badge badge-{{ t.tipo }}">{{ t.tipo }}</span>
           <div>
             <p class="task-title">{{ t.titulo }}</p>
-            <p class="task-meta">{{ t.contato }} · vence {{ t.prazo }}</p>
+            <p class="task-meta">{{ t.contato.nome if t.contato else '—' }} · vence {{ t.prazo }}</p>
           </div>
         </li>
         {% else %}
@@ -1224,7 +162,7 @@
         </thead>
         <tbody id="contacts-body">
           {% for c in contatos %}
-          <tr data-contact-row data-stage="{{ c.etapa|lower }}">
+          <tr data-contact-row data-stage="{{ c.etapa.nome|lower }}">
             <td data-label="Contato">
               <div class="contact-name-cell">
                 <span class="contact-avatar">{{ c.iniciais }}</span>
@@ -1232,9 +170,10 @@
               </div>
             </td>
             <td data-label="Empresa">{{ c.empresa }}</td>
-            <td data-label="Etapa"><span class="stage-pill stage-{{ c.etapa_cor }}">{{ c.etapa }}</span></td>
+            <td data-label="Etapa"><span class="stage-pill stage-{{ c.etapa.cor }}">{{ c.etapa.nome }}</span></td>
             <td data-label="Última interação">
               <span class="interaction">
+                {% if c.ultima_interacao %}
                 {% if c.ultima_interacao.tipo == 'email' %}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 6l9 7 9-7"/></svg>
                 {% elif c.ultima_interacao.tipo == 'ligacao' %}
@@ -1242,7 +181,10 @@
                 {% else %}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 5h16v10H9l-4 4V5z"/></svg>
                 {% endif %}
-                <span>{{ c.ultima_interacao.resumo }} · {{ c.ultima_interacao.data }}</span>
+                <span>{{ c.ultima_interacao.resumo or c.ultima_interacao.tipo }} · {{ c.ultima_interacao.data.strftime('%d/%m/%Y') }}</span>
+                {% else %}
+                <span>Sem interação</span>
+                {% endif %}
               </span>
             </td>
             <td data-label="Ação">
@@ -1297,403 +239,127 @@
     </div>
   </section>
 
-</main>
+  <button type="button" class="mobile-add" data-open-dialog="modal-novo-contato" aria-label="Adicionar novo contato">+</button>
 
-<footer>
-  {{ empresa_nome|default('Painel Comercial') }} · CRM · atualizado em {{ data_atualizacao|default('agora') }}
-</footer>
-
-<button type="button" class="mobile-add" data-open-dialog="modal-novo-contato" aria-label="Adicionar novo contato">+</button>
-
-<dialog id="modal-novo-contato" aria-labelledby="novo-contato-titulo">
-  <form class="dialog-inner" method="post" action="{{ url_for('main.criar_contato') }}">
-    <div class="dialog-head">
-      <div>
-        <h3 id="novo-contato-titulo">Novo contato</h3>
-        <p>Cadastre os dados essenciais e posicione o contato no funil.</p>
+  <dialog id="modal-novo-contato" aria-labelledby="novo-contato-titulo">
+    <form class="dialog-inner" method="post" action="{{ url_for('main.criar_contato') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="dialog-head">
+        <div>
+          <h3 id="novo-contato-titulo">Novo contato</h3>
+          <p>Cadastre os dados essenciais e posicione o contato no funil.</p>
+        </div>
+        <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
       </div>
-      <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
-    </div>
 
-    <label for="nc-nome">Nome</label>
-    <input id="nc-nome" name="nome" type="text" autocomplete="name" required>
+      <label for="nc-nome">Nome</label>
+      <input id="nc-nome" name="nome" type="text" autocomplete="name" required>
 
-    <label for="nc-empresa">Empresa</label>
-    <input id="nc-empresa" name="empresa" type="text" autocomplete="organization">
+      <label for="nc-empresa">Empresa</label>
+      <input id="nc-empresa" name="empresa" type="text" autocomplete="organization">
 
-    <label for="nc-email">E-mail</label>
-    <input id="nc-email" name="email" type="email" autocomplete="email">
+      <label for="nc-email">E-mail</label>
+      <input id="nc-email" name="email" type="email" autocomplete="email">
 
-    <label for="nc-telefone">Telefone</label>
-    <input id="nc-telefone" name="telefone" type="tel" autocomplete="tel">
+      <label for="nc-telefone">Telefone</label>
+      <input id="nc-telefone" name="telefone" type="tel" autocomplete="tel">
 
-    <label for="nc-etapa">Etapa inicial</label>
-    <select id="nc-etapa" name="etapa">
-      {% for etapa in funil %}
-      <option value="{{ etapa.nome }}">{{ etapa.nome }}</option>
-      {% endfor %}
-    </select>
+      <label for="nc-etapa">Etapa inicial</label>
+      <select id="nc-etapa" name="etapa">
+        {% for etapa in funil %}
+        <option value="{{ etapa.nome }}">{{ etapa.nome }}</option>
+        {% endfor %}
+      </select>
 
-    <div class="dialog-actions">
-      <button type="button" data-close-dialog>Cancelar</button>
-      <button type="submit" class="primary">Salvar contato</button>
-    </div>
-  </form>
-</dialog>
-
-<dialog id="modal-automacao" aria-labelledby="nova-automacao-titulo">
-  <form class="dialog-inner" method="post" action="{{ url_for('main.criar_automacao') }}">
-    <div class="dialog-head">
-      <div>
-        <h3 id="nova-automacao-titulo">Nova automação</h3>
-        <p>Defina um gatilho e a ação que deve ocorrer automaticamente.</p>
+      <div class="dialog-actions">
+        <button type="button" data-close-dialog>Cancelar</button>
+        <button type="submit" class="primary">Salvar contato</button>
       </div>
-      <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
-    </div>
+    </form>
+  </dialog>
 
-    <label for="au-gatilho">Quando isto acontecer</label>
-    <select id="au-gatilho" name="gatilho">
-      <option value="novo_contato">Novo contato cadastrado</option>
-      <option value="mudanca_etapa">Negócio muda de etapa</option>
-      <option value="sem_interacao">Contato sem interação há X dias</option>
-    </select>
+  <dialog id="modal-automacao" aria-labelledby="nova-automacao-titulo">
+    <form class="dialog-inner" method="post" action="{{ url_for('main.criar_automacao') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="dialog-head">
+        <div>
+          <h3 id="nova-automacao-titulo">Nova automação</h3>
+          <p>Defina um gatilho e a ação que deve ocorrer automaticamente.</p>
+        </div>
+        <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
+      </div>
 
-    <label for="au-acao">Fazer isto</label>
-    <select id="au-acao" name="acao">
-      <option value="enviar_email">Enviar e-mail automático</option>
-      <option value="criar_tarefa">Criar tarefa para a equipe</option>
-      <option value="lembrete">Disparar lembrete</option>
-    </select>
+      <label for="au-gatilho">Quando isto acontecer</label>
+      <select id="au-gatilho" name="gatilho">
+        <option value="novo_contato">Novo contato cadastrado</option>
+        <option value="mudanca_etapa">Negócio muda de etapa</option>
+        <option value="sem_interacao">Contato sem interação há X dias</option>
+      </select>
 
-    <label for="au-prazo">Prazo / atraso (dias)</label>
-    <input id="au-prazo" name="prazo_dias" type="number" min="0" value="1" inputmode="numeric">
+      <label for="au-acao">Fazer isto</label>
+      <select id="au-acao" name="acao">
+        <option value="enviar_email">Enviar e-mail automático</option>
+        <option value="criar_tarefa">Criar tarefa para a equipe</option>
+        <option value="lembrete">Disparar lembrete</option>
+      </select>
 
-    <div class="dialog-actions">
-      <button type="button" data-close-dialog>Cancelar</button>
-      <button type="submit" class="primary">Ativar automação</button>
-    </div>
-  </form>
-</dialog>
+      <label for="au-prazo">Prazo / atraso (dias)</label>
+      <input id="au-prazo" name="prazo_dias" type="number" min="0" value="1" inputmode="numeric">
 
+      <div class="dialog-actions">
+        <button type="button" data-close-dialog>Cancelar</button>
+        <button type="submit" class="primary">Ativar automação</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="modal-nova-tarefa" aria-labelledby="nova-tarefa-titulo">
+    <form class="dialog-inner" method="post" action="{{ url_for('main.criar_tarefa') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="dialog-head">
+        <div>
+          <h3 id="nova-tarefa-titulo">Nova tarefa</h3>
+          <p>Agende uma tarefa ou lembrete para a equipe comercial.</p>
+        </div>
+        <button type="button" class="dialog-close" data-close-dialog aria-label="Fechar">×</button>
+      </div>
+
+      <label for="nt-titulo">Título</label>
+      <input id="nt-titulo" name="titulo" type="text" required>
+
+      <label for="nt-descricao">Descrição</label>
+      <input id="nt-descricao" name="descricao" type="text">
+
+      <label for="nt-tipo">Tipo</label>
+      <select id="nt-tipo" name="tipo">
+        <option value="tarefa">Tarefa</option>
+        <option value="lembrete">Lembrete</option>
+        <option value="automacao">Automação</option>
+      </select>
+
+      <label for="nt-contato">Contato relacionado</label>
+      <select id="nt-contato" name="contato_id">
+        <option value="">Sem contato</option>
+        {% for contato in contatos %}
+        <option value="{{ contato.id }}">{{ contato.nome }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="nt-vencimento">Vencimento</label>
+      <input id="nt-vencimento" name="vencimento" type="date">
+
+      <div class="dialog-actions">
+        <button type="button" data-close-dialog>Cancelar</button>
+        <button type="submit" class="primary">Salvar tarefa</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="application/json" id="dados-graficos">{{ {"funil": grafico_funil, "receita": grafico_receita} | tojson }}</script>
+
+{% endblock %}
+
+{% block scripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script>
-(() => {
-  "use strict";
-
-  const dadosFunil = {{ grafico_funil|tojson }};
-  const dadosReceita = {{ grafico_receita|tojson }};
-
-  const normalize = (value = "") =>
-    value.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-
-  /* Dialogs */
-  document.querySelectorAll("[data-open-dialog]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const dialog = document.getElementById(button.dataset.openDialog);
-      if (dialog && typeof dialog.showModal === "function") dialog.showModal();
-    });
-  });
-
-  document.querySelectorAll("[data-close-dialog]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const dialog = button.closest("dialog");
-      if (dialog) dialog.close();
-    });
-  });
-
-  document.querySelectorAll("dialog").forEach((dialog) => {
-    dialog.addEventListener("click", (event) => {
-      if (event.target === dialog) dialog.close();
-    });
-  });
-
-  /* Atalhos: / busca global | n novo contato */
-  document.addEventListener("keydown", (event) => {
-    const target = event.target;
-    const isTyping = target instanceof HTMLInputElement ||
-                     target instanceof HTMLTextAreaElement ||
-                     target instanceof HTMLSelectElement ||
-                     target?.isContentEditable;
-
-    if (!isTyping && event.key === "/") {
-      event.preventDefault();
-      document.getElementById("busca-geral")?.focus();
-    }
-
-    if (!isTyping && event.key.toLowerCase() === "n") {
-      const dialog = document.getElementById("modal-novo-contato");
-      if (dialog && !dialog.open) dialog.showModal();
-    }
-  });
-
-  /* Filtro local de contatos */
-  const contactSearch = document.getElementById("filtro-contatos");
-  const stageFilter = document.getElementById("filtro-etapa");
-  const contactRows = [...document.querySelectorAll("[data-contact-row]")];
-  const contactCount = document.getElementById("contacts-count");
-
-  function filterContacts(){
-    const query = normalize(contactSearch?.value);
-    const stage = normalize(stageFilter?.value);
-    let visible = 0;
-
-    contactRows.forEach((row) => {
-      const matchesText = !query || normalize(row.innerText).includes(query);
-      const matchesStage = !stage || normalize(row.dataset.stage) === stage;
-      const show = matchesText && matchesStage;
-      row.hidden = !show;
-      if (show) visible += 1;
-    });
-
-    if (contactCount) {
-      contactCount.textContent = (query || stage)
-        ? `${visible} de ${contactRows.length}`
-        : `${contactRows.length} no total`;
-    }
-  }
-
-  contactSearch?.addEventListener("input", filterContacts);
-  stageFilter?.addEventListener("change", filterContacts);
-
-  /* Filtro local de tarefas */
-  const taskButtons = [...document.querySelectorAll("[data-task-filter]")];
-  const taskItems = [...document.querySelectorAll(".task-item[data-status]")];
-  const taskCount = document.getElementById("task-count");
-
-  taskButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const filter = button.dataset.taskFilter;
-
-      taskButtons.forEach((item) => {
-        const active = item === button;
-        item.classList.toggle("is-active", active);
-        item.setAttribute("aria-pressed", active ? "true" : "false");
-      });
-
-      let visible = 0;
-      taskItems.forEach((item) => {
-        const show = filter === "all" || item.dataset.status === filter;
-        item.hidden = !show;
-        if (show) visible += 1;
-      });
-
-      if (taskCount) {
-        const label = filter === "all" ? "itens" :
-                      filter === "done" ? "concluídas" :
-                      filter === "overdue" ? "atrasadas" : "pendentes";
-        taskCount.textContent = `${visible} ${label}`;
-      }
-    });
-  });
-
-  /* Navegação contextual */
-  const navLinks = [...document.querySelectorAll(".section-nav a")];
-  const observedSections = navLinks
-    .map((link) => document.querySelector(link.getAttribute("href")))
-    .filter(Boolean);
-
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-
-      if (!visible) return;
-      navLinks.forEach((link) => {
-        const active = link.getAttribute("href") === `#${visible.target.id}`;
-        if (active) link.setAttribute("aria-current", "location");
-        else link.removeAttribute("aria-current");
-      });
-    }, { rootMargin: "-25% 0px -60% 0px", threshold: [0.01, .2, .5] });
-
-    observedSections.forEach((section) => observer.observe(section));
-  }
-
-  /* Gráficos: cores ligadas aos tokens CSS e atualizadas com o tema do sistema */
-  if (typeof Chart !== "undefined") {
-    Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
-
-    const money = new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      maximumFractionDigits: 0
-    });
-
-    const cssColor = (name) =>
-      getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-
-    const funnelCanvas = document.getElementById("grafico-funil");
-    const funnelEmpty = document.getElementById("grafico-funil-vazio");
-    const revenueCanvas = document.getElementById("grafico-receita");
-    const revenueEmpty = document.getElementById("grafico-receita-vazio");
-
-    const funnelHasData = Array.isArray(dadosFunil?.valores) && dadosFunil.valores.some((v) => Number(v) > 0);
-    const revenueHasData = Array.isArray(dadosReceita?.valores) && dadosReceita.valores.some((v) => Number(v) !== 0);
-
-    let funnelChart = null;
-    let revenueChart = null;
-
-    function chartPalette(){
-      return {
-        text: cssColor("--chart-text"),
-        grid: cssColor("--chart-grid"),
-        blue: cssColor("--chart-blue"),
-        green: cssColor("--chart-green"),
-        greenFill: cssColor("--chart-green-fill"),
-        tooltipBg: cssColor("--chart-tooltip-bg"),
-        tooltipText: cssColor("--chart-tooltip-text")
-      };
-    }
-
-    function makeScales(palette){
-      return {
-        x: {
-          grid: { display: false },
-          border: { color: palette.grid },
-          ticks: { color: palette.text, font: { size: 10 } }
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: palette.grid },
-          border: { display: false },
-          ticks: { color: palette.text, font: { size: 10 }, precision: 0 }
-        }
-      };
-    }
-
-    function tooltipTheme(palette){
-      return {
-        backgroundColor: palette.tooltipBg,
-        titleColor: palette.tooltipText,
-        bodyColor: palette.tooltipText,
-        borderColor: palette.grid,
-        borderWidth: 1,
-        displayColors: false
-      };
-    }
-
-    function buildCharts(){
-      const palette = chartPalette();
-      Chart.defaults.color = palette.text;
-      const scales = makeScales(palette);
-
-      if (funnelCanvas && funnelHasData) {
-        funnelChart = new Chart(funnelCanvas, {
-          type: "bar",
-          data: {
-            labels: dadosFunil.labels,
-            datasets: [{
-              label: "Negócios",
-              data: dadosFunil.valores,
-              backgroundColor: palette.blue,
-              borderRadius: 6,
-              maxBarThickness: 38
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                ...tooltipTheme(palette),
-                callbacks: {
-                  label: (context) => `${context.raw} negócio${Number(context.raw) === 1 ? "" : "s"}`
-                }
-              }
-            },
-            scales
-          }
-        });
-      } else if (funnelCanvas && funnelEmpty) {
-        funnelCanvas.hidden = true;
-        funnelEmpty.hidden = false;
-      }
-
-      if (revenueCanvas && revenueHasData) {
-        revenueChart = new Chart(revenueCanvas, {
-          type: "line",
-          data: {
-            labels: dadosReceita.labels,
-            datasets: [{
-              label: "Receita",
-              data: dadosReceita.valores,
-              borderColor: palette.green,
-              backgroundColor: palette.greenFill,
-              fill: true,
-              tension: .32,
-              pointRadius: 2.5,
-              pointHoverRadius: 5,
-              borderWidth: 2
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: { intersect: false, mode: "index" },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                ...tooltipTheme(palette),
-                callbacks: {
-                  label: (context) => money.format(Number(context.raw || 0))
-                }
-              }
-            },
-            scales: {
-              x: scales.x,
-              y: {
-                ...scales.y,
-                ticks: {
-                  ...scales.y.ticks,
-                  callback: (value) => money.format(Number(value))
-                }
-              }
-            }
-          }
-        });
-      } else if (revenueCanvas && revenueEmpty) {
-        revenueCanvas.hidden = true;
-        revenueEmpty.hidden = false;
-      }
-    }
-
-    function refreshChartTheme(){
-      const palette = chartPalette();
-      Chart.defaults.color = palette.text;
-
-      if (funnelChart) {
-        funnelChart.data.datasets[0].backgroundColor = palette.blue;
-        funnelChart.options.scales = makeScales(palette);
-        Object.assign(funnelChart.options.plugins.tooltip, tooltipTheme(palette));
-        funnelChart.update("none");
-      }
-
-      if (revenueChart) {
-        const scales = makeScales(palette);
-        revenueChart.data.datasets[0].borderColor = palette.green;
-        revenueChart.data.datasets[0].backgroundColor = palette.greenFill;
-        revenueChart.options.scales.x = scales.x;
-        revenueChart.options.scales.y.grid.color = palette.grid;
-        revenueChart.options.scales.y.ticks.color = palette.text;
-        Object.assign(revenueChart.options.plugins.tooltip, tooltipTheme(palette));
-        revenueChart.update("none");
-      }
-    }
-
-    buildCharts();
-
-    const themeQuery = window.matchMedia?.("(prefers-color-scheme: dark)");
-    if (themeQuery) {
-      if (typeof themeQuery.addEventListener === "function") {
-        themeQuery.addEventListener("change", refreshChartTheme);
-      } else if (typeof themeQuery.addListener === "function") {
-        themeQuery.addListener(refreshChartTheme);
-      }
-    }
-  }
-})();
-</script>
-
-</body>
-</html>
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

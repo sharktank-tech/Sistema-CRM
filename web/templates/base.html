@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5fbf8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a1220" media="(prefers-color-scheme: dark)">
+<title>{% block titulo %}Painel Comercial{% endblock %} · CRM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" href="/static/img/favi-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/dashboard.css">
+{% block head %}{% endblock %}
+</head>
+<body>
+
+<a class="skip-link" href="#conteudo-principal">Pular para o conteúdo principal</a>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-main">
+
+      <a class="brand" href="{{ url_for('main.dashboard') }}#visao-geral" aria-label="Ir para visão geral do CRM">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M4 4h16l-6 9v6l-4 2v-8L4 4z"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>{{ empresa_nome }}</strong>
+          <small>CRM · operação comercial</small>
+        </span>
+      </a>
+
+      <form class="global-search" action="{{ url_for('main.buscar') }}" method="get" role="search">
+        <label class="visually-hidden" for="busca-geral">Buscar contato, empresa ou negócio</label>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/>
+        </svg>
+        <input id="busca-geral" type="search" name="q" autocomplete="off" placeholder="Buscar contato, empresa ou negócio…">
+        <span class="shortcut-hint" aria-hidden="true">/</span>
+      </form>
+
+      <div class="header-actions">
+        {% block header_acoes %}{% endblock %}
+        {% if current_user.is_authenticated %}
+        <div class="user-chip" title="{{ current_user.nome }}">
+          <span class="user-avatar">{{ current_user.iniciais }}</span>
+          <span class="user-name">{{ current_user.nome }}</span>
+        </div>
+        <form method="post" action="{{ url_for('main.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="ghost-btn" style="padding:.5rem .7rem;border:1px solid var(--line);background:transparent;color:var(--header-muted);font-size:.74rem" title="Sair da conta">Sair</button>
+        </form>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <nav class="section-nav" aria-label="Seções do painel">
+      <a href="{{ url_for('main.dashboard') }}#visao-geral">Visão geral</a>
+      <a href="{{ url_for('main.dashboard') }}#funil">Pipeline</a>
+      <a href="{{ url_for('main.listar_tarefas') }}">Tarefas</a>
+      <a href="{{ url_for('main.dashboard') }}#contatos">Contatos</a>
+      <a href="{{ url_for('main.dashboard') }}#relatorios">Relatórios</a>
+    </nav>
+  </div>
+</header>
+
+<main id="conteudo-principal">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages" role="status" aria-live="polite">
+      {% for category, message in messages %}
+      <p class="flash flash-{{ category }}">{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+</main>
+
+<footer>
+  {{ empresa_nome }} · CRM · atualizado em {{ data_atualizacao }}
+</footer>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

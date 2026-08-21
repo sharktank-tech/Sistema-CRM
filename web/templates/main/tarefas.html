@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block titulo %}Tarefas{% endblock %}
+
+{% block head %}
+<style>
+  :root{color-scheme:light dark;--page:#f5fbf8;--surface:#ffffff;--ink:#10261d;--muted:#425e52;--faint:#5f746a;--link:#087f69;--line:rgba(16,38,29,.12);--font-body:'Segoe UI',Arial,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--page:#0a1220;--surface:#132238;--ink:#f4f7fb;--muted:#c3cee0;--faint:#a9b8ce;--link:#7fc4ff;--line:rgba(214,228,255,.14)}}
+  *{box-sizing:border-box}body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+  main{max-width:960px;margin:0 auto;padding:2rem 1rem}
+  .voltar{display:inline-block;margin-bottom:1.2rem;color:var(--link);font-size:.8rem;font-weight:600;text-decoration:none}
+  h1{font-size:1.5rem;margin:0}
+  .subtitulo{color:var(--muted);font-size:.85rem;margin:.3rem 0 1.4rem}
+  .tarefa{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.9rem 1rem;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .tarefa .titulo{font-size:.88rem;font-weight:600}
+  .tarefa .meta{color:var(--faint);font-size:.72rem;margin-top:.15rem}
+  .tarefa.feita .titulo{text-decoration:line-through;color:var(--muted)}
+  .acao{color:var(--link);font-size:.72rem;font-weight:600;text-decoration:none;white-space:nowrap}
+  .sem-dados{color:var(--faint);font-size:.85rem}
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <a class="voltar" href="{{ url_for('main.dashboard') }}">← Voltar ao painel</a>
+
+  <h1>Tarefas</h1>
+  <p class="subtitulo">{{ tarefas|selectattr('concluida', 'equalto', false)|list|length }} pendente{{ 's' if tarefas|selectattr('concluida', 'equalto', false)|list|length != 1 else '' }} de {{ tarefas|length }} total</p>
+
+  {% for t in tarefas %}
+  <article class="tarefa {{ 'feita' if t.concluida }}">
+    <div>
+      <p class="titulo">{{ t.titulo }} <span style="color:var(--faint)">· {{ t.tipo }}</span></p>
+      <p class="meta">{{ t.contato.nome if t.contato else 'Sem contato' }} · vence {{ t.prazo }}</p>
+    </div>
+    {% if not t.concluida %}
+    <a class="acao" href="{{ url_for('main.concluir_tarefa', id=t.id) }}">Concluir →</a>
+    {% else %}
+    <span class="acao">Concluída</span>
+    {% endif %}
+  </article>
+  {% else %}
+  <p class="sem-dados">Nenhuma tarefa cadastrada ainda.</p>
+  {% endfor %}
+
+{% endblock %}

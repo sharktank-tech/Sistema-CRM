@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ contato.nome }}{% endblock %}
+
+{% block head %}
+<style>
+  :root{color-scheme:light dark;--page:#f5fbf8;--surface:#ffffff;--ink:#10261d;--muted:#425e52;--faint:#5f746a;--link:#087f69;--line:rgba(16,38,29,.12);--line-strong:rgba(16,38,29,.28);--accent:#e6b400;--accent-2:#ffd24a;--accent-contrast:#10261d;--success:#116b3d;--success-bg:#dcf8e9;--focus-ring:#087a63;--font-body:'Segoe UI',Arial,sans-serif}
+  @media (prefers-color-scheme:dark){:root{--page:#0a1220;--surface:#132238;--ink:#f4f7fb;--muted:#c3cee0;--faint:#a9b8ce;--link:#7fc4ff;--line:rgba(214,228,255,.14);--line-strong:rgba(214,228,255,.26);--focus-ring:rgba(96,165,250,.78)}}
+  *{box-sizing:border-box}body{margin:0;min-width:320px;background:var(--page);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+  main{max-width:960px;margin:0 auto;padding:2rem 1rem}
+  .voltar{display:inline-block;margin-bottom:1.2rem;color:var(--link);font-size:.8rem;font-weight:600;text-decoration:none}
+  h1{font-size:1.5rem;margin:0}
+  .subtitulo{color:var(--muted);font-size:.85rem;margin:.3rem 0 1.4rem}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.1rem;margin-bottom:1rem}
+  .card h2{font-size:.95rem;margin:0 0 .8rem}
+  .campo{display:flex;justify-content:space-between;gap:1rem;padding:.45rem 0;border-bottom:1px solid var(--line);font-size:.85rem}
+  .campo:last-child{border-bottom:0}
+  .campo dt{color:var(--faint);font-weight:600}
+  .campo dd{margin:0;text-align:right}
+  .badge{display:inline-block;padding:.15rem .5rem;border-radius:999px;background:var(--success-bg);color:var(--success);font-size:.68rem}
+  .linha{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-bottom:1px solid var(--line);font-size:.85rem}
+  .linha:last-child{border-bottom:0}
+  .linha .tipo{font-weight:600}
+  .linha .meta{color:var(--faint);font-size:.72rem;text-align:right}
+  .sem-dados{color:var(--faint);font-size:.82rem}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  label{display:block;color:var(--muted);font-size:.72rem;font-weight:600;margin-bottom:.2rem}
+  input,select{width:100%;min-height:38px;padding:.45rem .6rem;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-size:15px}
+  input:focus,select:focus{border-color:var(--focus-ring);outline:none}
+  form button{grid-column:1/-1;min-height:42px;border:0;border-radius:8px;background:var(--accent);color:var(--accent-contrast);font-size:.85rem;font-weight:700;cursor:pointer}
+  form button:hover{background:var(--accent-2)}
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <a class="voltar" href="{{ url_for('main.dashboard') }}">← Voltar ao painel</a>
+
+  <h1>{{ contato.nome }}</h1>
+  <p class="subtitulo">{{ contato.empresa or 'Sem empresa' }}</p>
+
+  <section class="card" aria-label="Dados do contato">
+    <h2>Dados cadastrais</h2>
+    <dl>
+      <div class="campo"><dt>E-mail</dt><dd>{{ contato.email or '—' }}</dd></div>
+      <div class="campo"><dt>Telefone</dt><dd>{{ contato.telefone or '—' }}</dd></div>
+      <div class="campo"><dt>Etapa no funil</dt><dd><span class="badge">{{ contato.etapa.nome }}</span></dd></div>
+      <div class="campo"><dt>Última interação</dt>
+        <dd>
+          {% if contato.ultima_interacao %}
+          {{ contato.ultima_interacao.tipo }} · {{ contato.ultima_interacao.data.strftime('%d/%m/%Y') }}
+          {% else %}
+          Sem interação
+          {% endif %}
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="card" aria-label="Registrar interação">
+    <h2>Registrar interação</h2>
+    <form method="post" action="{{ url_for('main.criar_interacao', contato_id=contato.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div>
+        <label for="int-tipo">Tipo</label>
+        <select id="int-tipo" name="tipo">
+          <option value="email">E-mail</option>
+          <option value="ligacao">Ligação</option>
+          <option value="nota">Nota</option>
+        </select>
+      </div>
+      <div>
+        <label for="int-data">Data</label>
+        <input id="int-data" name="data" type="date">
+      </div>
+      <div>
+        <label for="int-resumo">Resumo</label>
+        <input id="int-resumo" name="resumo" type="text" placeholder="Ex.: proposta enviada" required>
+      </div>
+      <button type="submit">Salvar interação</button>
+    </form>
+  </section>
+
+  <section class="card" aria-label="Histórico de interações">
+    <h2>Histórico de interações</h2>
+    {% for i in interacoes %}
+    <div class="linha">
+      <span class="tipo">{{ i.tipo }}</span>
+      <span>{{ i.resumo }}</span>
+      <span class="meta">{{ i.data.strftime('%d/%m/%Y') }}</span>
+    </div>
+    {% else %}
+    <p class="sem-dados">Nenhuma interação registrada.</p>
+    {% endfor %}
+  </section>
+
+  <section class="card" aria-label="Tarefas do contato">
+    <h2>Tarefas relacionadas</h2>
+    {% for t in tarefas %}
+    <div class="linha">
+      <span class="tipo">{{ 'Concluída' if t.concluida else t.tipo }}</span>
+      <span>{{ t.titulo }}</span>
+      <span class="meta">vence {{ t.prazo }}</span>
+    </div>
+    {% else %}
+    <p class="sem-dados">Nenhuma tarefa cadastrada para este contato.</p>
+    {% endfor %}
+  </section>
+
+{% endblock %}

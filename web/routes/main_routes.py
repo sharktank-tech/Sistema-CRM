@@ -1,103 +1,273 @@
-from flask import Blueprint, render_template, redirect,request, url_for
-from web.modules.model import *
-from flask_login import login_required, current_user
+from datetime import date, datetime
+
+from flask import Blueprint, flash, jsonify, redirect, render_template, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
+from sqlalchemy.orm import joinedload
+
+from web import db, limiter
+from web.modules.model import (
+    Automacao,
+    Contato,
+    EtapaFunil,
+    Interacao,
+    Tarefa,
+    Usuario,
+)
+from web.services.busca import buscar_contatos, serializar_contato
+from web.services.funil import dados_funil, grafico_funil
+from web.services.metricas import dados_metricas
 
 main_bp = Blueprint('main', __name__)
 
+
+# ====== Autenticação =======
+
+@main_bp.route("/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.dashboard"))
+
+    erro = None
+    if request.method == "POST":
+        email = (request.form.get("email") or '').strip().lower()
+        senha = request.form.get("senha") or ''
+
+        usuario = Usuario.query.filter_by(email=email).first()
+        if usuario and usuario.check_password(senha):
+            login_user(usuario)
+            proxima = request.args.get("next")
+            if proxima and not proxima.startswith(("/", "http://", "https://")):
+                proxima = None
+            return redirect(proxima or url_for("main.dashboard"))
+
+        erro = "E-mail ou senha inválidos."
+
+    return render_template("main/login.html", erro=erro)
+
+
+@main_bp.route("/logout", methods=["POST"])
+@login_required
+def logout():
+    logout_user()
+    flash("Sessão encerrada.", "info")
+    return redirect(url_for("main.login"))
+
+
 # ====== Principal =======
 
-# ===== Rota principal dashboard
 @main_bp.route('/')
+@login_required
 def dashboard():
-    empresa_nome = Empresa.query.all()
-    usuario = current_user
-    periodo_funil = Empresa
-    funil = EtapaFunil.query.all()
-    metricas = ReceitaMensal.query.all()
-    contatos = Contato.query.all()
-    tarefas = Tarefa.query.all()
-    grafico_funil = {
-        "labels": ["Prospecção", "Qualificação", "Fechamento"],
-        "valores": [50, 40, 24]
-    },
-    grafico_receita = {
-        "labels": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
-        "valores": [5000, 7000, 10000, 13000, 15000, 18000]
-    },
-    data_atualizacao = "18/06/2026"
+    funil = dados_funil()
+    metricas, grafico_receita = dados_metricas()
+
+    contatos = Contato.query.options(
+        joinedload(Contato.etapa),
+        joinedload(Contato.interacoes),
+    ).all()
+    tarefas = Tarefa.query.order_by(Tarefa.criado_em.desc()).all()
 
     return render_template(
         "main/dashboard.html",
-        empresa=empresa_nome,
-        usuario=usuario,
-        periodo_funil=periodo_funil,
         contatos=contatos,
         funil=funil,
         metricas=metricas,
+        grafico_funil=grafico_funil(funil),
         grafico_receita=grafico_receita,
-        data_atualizacao=data_atualizacao,
         tarefas=tarefas,
-        grafico_funil=grafico_funil
     )
 
-# Rota para buscar informações par ao front-end
+
 @main_bp.route('/buscar')
+@login_required
 def buscar():
-    termo = request.args.get('q')
-    return render_template('main/resultado.html')
+    termo = request.args.get('q') or ''
+    resultados = buscar_contatos(termo)
+
+    if request.args.get('formato') == 'json':
+        return jsonify({
+            "termo": termo,
+            "total": len(resultados),
+            "resultados": [serializar_contato(c) for c in resultados],
+        })
+
+    return render_template(
+        'main/resultado.html',
+        termo=termo,
+        resultados=resultados,
+    )
+
 
 # ===== Contato =====
 
-# Rota para contato
-@main_bp.route('/contato/<contato_id>')
+@main_bp.route('/contato/<int:contato_id>')
+@login_required
 def contato_detalhe(contato_id):
-    # consultar banco
-    info_contatos  = Contato
-    print(info_contatos)
+    contato = Contato.query.options(
+        joinedload(Contato.interacoes)
+    ).get_or_404(contato_id)
+    tarefas = Tarefa.query.filter_by(contato_id=contato_id).all()
     return render_template(
-        "contato.html",
-        contato={info_contatos},
+        "main/contato.html",
+        contato=contato,
+        tarefas=tarefas,
+        interacoes=contato.interacoes,
     )
 
-# Rota para criar o contato
+
+@main_bp.route("/contato/<int:contato_id>/interacao/nova", methods=["POST"])
+@login_required
+def criar_interacao(contato_id):
+    contato = Contato.query.get_or_404(contato_id)
+
+    tipo = request.form.get("tipo")
+    resumo = (request.form.get("resumo") or '').strip()
+    data_raw = request.form.get("data")
+
+    if tipo not in ("email", "ligacao", "nota"):
+        flash("Tipo de interação inválido.", "error")
+        return redirect(url_for("main.contato_detalhe", contato_id=contato.id))
+
+    if not resumo:
+        flash("Informe um resumo da interação.", "error")
+        return redirect(url_for("main.contato_detalhe", contato_id=contato.id))
+
+    data = date.today()
+    if data_raw:
+        try:
+            data = datetime.strptime(data_raw, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Data da interação inválida.", "error")
+            return redirect(url_for("main.contato_detalhe", contato_id=contato.id))
+
+    interacao = Interacao(contato=contato, tipo=tipo, resumo=resumo, data=data)
+    db.session.add(interacao)
+    db.session.commit()
+    flash("Interação registrada com sucesso.", "success")
+    return redirect(url_for("main.contato_detalhe", contato_id=contato.id))
+
+
 @main_bp.route("/contato/novo", methods=["POST"])
+@login_required
 def criar_contato():
-    nome = request.form["nome"]
-    empresa = request.form["empresa"]
-    email = request.form["email"]
-    telefone = request.form["telefone"]
-    etapa = request.form["etapa"]
+    nome = (request.form.get("nome") or '').strip()
+    empresa = (request.form.get("empresa") or '').strip()
+    email = (request.form.get("email") or '').strip()
+    telefone = (request.form.get("telefone") or '').strip()
+    etapa_nome = request.form.get("etapa")
 
-    # salvar no banco
+    if not nome:
+        flash("O nome do contato é obrigatório.", "error")
+        return redirect(url_for("main.dashboard", _anchor="contatos"))
 
-    return redirect(url_for("main.dashboard"))
+    if email and Contato.query.filter_by(email=email).first():
+        flash("Já existe um contato cadastrado com este e-mail.", "error")
+        return redirect(url_for("main.dashboard", _anchor="contatos"))
+
+    etapa = (
+        EtapaFunil.query.filter_by(nome=etapa_nome).first()
+        or EtapaFunil.query.order_by(EtapaFunil.ordem).first()
+    )
+    if not etapa:
+        flash("Não há etapas configuradas. Configure o funil primeiro.", "error")
+        return redirect(url_for("main.dashboard", _anchor="contatos"))
+
+    contato = Contato(
+        nome=nome,
+        empresa=empresa or None,
+        email=email or None,
+        telefone=telefone or None,
+        etapa_id=etapa.id,
+    )
+    db.session.add(contato)
+    db.session.commit()
+    flash(f"Contato \"{contato.nome}\" criado com sucesso.", "success")
+    return redirect(url_for("main.dashboard", _anchor="contatos"))
+
 
 # ===== Automação =====
 
-# Rota para criação de uma nova automação
 @main_bp.route("/automacao/nova", methods=["POST"])
+@login_required
 def criar_automacao():
-    gatilho = request.form["gatilho"]
-    acao = request.form["acao"]
-    prazo_dias = request.form["prazo_dias"]
+    gatilho = request.form.get("gatilho")
+    acao = request.form.get("acao")
+    prazo_dias = request.form.get("prazo_dias") or 0
 
-    # salvar no banco
+    if not gatilho or not acao:
+        flash("Informe o gatilho e a ação da automação.", "error")
+        return redirect(url_for("main.dashboard"))
 
-    return redirect(url_for("main/dashboard"))
+    try:
+        prazo_dias = int(prazo_dias)
+    except (TypeError, ValueError):
+        prazo_dias = 0
 
-# ==== Tarefas ====
+    automacao = Automacao(
+        gatilho=gatilho,
+        acao=acao,
+        prazo_dias=prazo_dias,
+    )
+    db.session.add(automacao)
+    db.session.commit()
+    flash("Automação criada com sucesso.", "success")
+    return redirect(url_for("main.dashboard"))
 
-# Rota para adicionar tarefa
+
+# ===== Tarefas =====
+
 @main_bp.route("/tarefas")
+@login_required
 def listar_tarefas():
-    return render_template("tarefa/tarefas.html")
+    tarefas = Tarefa.query.order_by(Tarefa.vencimento).all()
+    return render_template("main/tarefas.html", tarefas=tarefas)
 
-# Rota para criar tarefa
+
 @main_bp.route("/tarefas/nova", methods=["POST"])
+@login_required
 def criar_tarefa():
-    return redirect(url_for("listar_tarefas"))
+    titulo = (request.form.get("titulo") or '').strip()
+    descricao = (request.form.get("descricao") or '').strip()
+    tipo = request.form.get("tipo") or "tarefa"
+    vencimento_raw = request.form.get("vencimento")
+    contato_id = request.form.get("contato_id")
 
-# Rota para conclusão de terefas
+    if not titulo:
+        flash("O título da tarefa é obrigatório.", "error")
+        return redirect(url_for("main.dashboard", _anchor="tarefas"))
+
+    vencimento = None
+    if vencimento_raw:
+        try:
+            vencimento = datetime.strptime(vencimento_raw, "%Y-%m-%d").date()
+        except ValueError:
+            flash("Data de vencimento inválida.", "error")
+            return redirect(url_for("main.dashboard", _anchor="tarefas"))
+
+    try:
+        contato_id = int(contato_id) if contato_id else None
+    except (TypeError, ValueError):
+        contato_id = None
+
+    tarefa = Tarefa(
+        titulo=titulo,
+        descricao=descricao or None,
+        tipo=tipo if tipo in ("tarefa", "lembrete", "automacao") else "tarefa",
+        vencimento=vencimento,
+        contato_id=contato_id,
+    )
+    db.session.add(tarefa)
+    db.session.commit()
+    flash("Tarefa criada com sucesso.", "success")
+    return redirect(url_for("main.dashboard", _anchor="tarefas"))
+
+
 @main_bp.route("/tarefas/<int:id>/concluir")
+@login_required
 def concluir_tarefa(id):
-    return redirect(url_for("main/dashboard"))
+    tarefa = Tarefa.query.get_or_404(id)
+    tarefa.concluida = True
+    db.session.commit()
+    flash(f"Tarefa \"{tarefa.titulo}\" concluída.", "success")
+    return redirect(url_for("main.dashboard", _anchor="tarefas"))
