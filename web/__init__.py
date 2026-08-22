@@ -44,12 +44,17 @@ DADOS_EXEMPLO_CONTATOS = [
 
 
 def _aplicar_migracoes(app):
-    if not app.config.get("AUTO_MIGRATE", False):
+    if app.config.get("TESTING"):
+        if not app.config.get("AUTO_MIGRATE", False):
+            return
+    elif not (app.config.get("AUTO_MIGRATE", False) or config.APP_ENV == "production"):
         return
     diretorio = os.path.join(app.root_path, "..", "migrations")
     if not os.path.isdir(diretorio):
         return
     from flask_migrate import upgrade
+
+    app.logger.info("Aplicando migrações do banco de dados...")
     upgrade(directory=diretorio)
 
 

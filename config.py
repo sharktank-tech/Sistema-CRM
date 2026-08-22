@@ -55,11 +55,21 @@ def get_config_class():
         raise RuntimeError(
             f"APP_ENV inválido: '{APP_ENV}'. Use: development, testing ou production."
         )
-    return mapping[APP_ENV]
+
+    config_class = mapping[APP_ENV]
+    if APP_ENV == "production" and config_class.DATABASE_URL.startswith("sqlite"):
+        raise RuntimeError(
+            "DATABASE_URL não definida para produção. Na Vercel o sistema de arquivos é "
+            "somente-leitura, então use um banco externo (ex.: Postgres) e defina DATABASE_URL "
+            "nas Environment Variables do projeto Vercel."
+        )
+    return config_class
 
 
 if not Config.SECRET_KEY:
     raise RuntimeError(
-        "SECRET_KEY não definida. Crie um arquivo .env a partir de .env.example "
-        "com um valor aleatório para SECRET_KEY."
+        "SECRET_KEY não definida. Defina a variável de ambiente SECRET_KEY "
+        "(nas Environment Variables do projeto Vercel ou em um arquivo .env a partir de "
+        ".env.example) com um valor aleatório, ex.: "
+        'python -c "import secrets; print(secrets.token_hex(32))"'
     )
