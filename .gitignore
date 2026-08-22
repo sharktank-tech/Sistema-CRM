@@ -1,7 +1,7 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flask,pycharm,git,vercel
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,pycharm,git,vercel
 
-### Flask ###
+### Flask ####
 instance/*
 !instance/.gitignore
 .webassets-cache
